@@ -1,0 +1,205 @@
+# 我的博客
+
+用 [Hugo](https://gohugo.io/) + [Blowfish](https://blowfish.page/) 主题搭建，托管在 GitHub Pages 上。
+
+---
+
+## 目录速览
+
+```
+blog/
+├── hugo.toml              站点配置（标题、配色、菜单、作者信息都在这里改）
+├── content/               所有内容
+│   ├── _index.md          首页顶部那段文字
+│   ├── about.md           关于页
+│   └── posts/             文章都放这里，一篇一个 .md 文件
+├── assets/
+│   ├── css/custom.css     自定义样式，改外观主要改这个文件
+│   └── img/avatar.svg     头像
+├── themes/blowfish/       主题本体（一般不用动）
+├── public/                构建产物，自动生成，不用管也不用提交
+└── .github/workflows/     自动部署脚本
+```
+
+---
+
+## 一、本地预览
+
+打开终端，进入博客目录后运行：
+
+```bash
+hugo server
+```
+
+然后浏览器打开 **http://localhost:1313**。
+
+这个服务会一直开着并监听文件变化，你改了文章或配置，保存后浏览器会自动刷新。想停止就按 `Ctrl + C`。
+
+> 如果提示 `hugo: command not found`，把终端关掉重新开一个再试（PATH 需要重开终端才生效）。
+
+---
+
+## 二、写一篇新文章
+
+在 `content/posts/` 下新建一个 `.md` 文件，例如 `my-first-note.md`。
+
+**文件名会变成网址**，所以建议用英文加短横线，不要用中文和空格。
+
+也可以用命令生成（会自动带上模板，日期也会自动填好）：
+
+```bash
+hugo new content content/posts/my-first-note.md
+```
+
+> 注意路径要带上 `content/` 前缀。
+
+文件开头这段叫「front matter」，用来描述这篇文章：
+
+```yaml
+---
+title: "文章标题"
+date: 2026-09-18
+draft: false
+summary: "一句话摘要，会显示在文章列表里"
+tags: ["标签一", "标签二"]
+categories: ["分类名"]
+---
+```
+
+几个关键字段：
+
+| 字段 | 说明 |
+| --- | --- |
+| `title` | 文章标题，必填 |
+| `date` | 发布日期，格式 `年-月-日` |
+| `draft` | `true` 是草稿（线上不显示），`false` 才正式发布 |
+| `summary` | 摘要，留空则自动截取正文开头 |
+| `tags` / `categories` | 标签和分类，会自动生成对应的归档页 |
+
+写完之后把 `draft` 改成 `false`，保存即可。
+
+正文语法看这篇就够了：[Markdown 写作速查表](content/posts/markdown-cheatsheet.md)。
+
+**本地看草稿**：运行 `hugo server -D`，草稿文章也会显示出来。
+
+---
+
+## 三、改外观
+
+### 换个配色（最简单）
+
+打开 `hugo.toml`，找到 `colorScheme`，换成下面任意一个：
+
+```
+autumn  avocado  bloody  blowfish  burufugu  congo  fire  forest
+github  marvel   neon    noir      ocean     one-light  princess  slate  terminal
+```
+
+改完保存，浏览器会自动刷新。
+
+### 深度定制样式
+
+打开 `assets/css/custom.css`。这个文件在主题样式**之后**加载，所以写在这里的规则会覆盖主题默认值。文件里已经准备好 6 段可直接用的例子（换主色、换字体、调圆角、中文行高、深色模式专属样式、隐藏元素），把注释去掉就能生效。
+
+### 改主题的页面结构
+
+想改 HTML 结构的话：把 `themes/blowfish/layouts/` 里对应的文件，复制到**站点根目录**的 `layouts/` 下的相同路径，再改复制出来的那份。Hugo 会优先使用站点根目录的版本，这样主题升级时你的改动不会被覆盖。
+
+### 其他常用开关
+
+都在 `hugo.toml` 的 `[params]` 里，改注释旁边就有说明：
+
+- `defaultAppearance` — 默认明色还是暗色
+- `[params.homepage] layout` — 首页样式：`page`（博客列表）/ `profile`（个人名片）/ `hero` / `card` / `background`
+- `[params.article] showTableOfContents` — 是否显示文章目录
+- `[params.article] sharingLinks` — 文末分享按钮
+- `[params.author]` — 作者名、头像、简介、社交链接
+
+---
+
+## 四、发布上线
+
+只需要做一次配置，之后每次写文章就是三条命令的事。
+
+### 第一次：创建仓库并推送
+
+1. 登录 GitHub，点右上角 **+ → New repository**。
+2. 仓库名**必须**填 `你的用户名.github.io`（把「你的用户名」换成你真实的 GitHub 用户名），选 **Public**，**不要**勾选添加 README。
+3. 在终端里依次执行（把两处「你的用户名」换掉）：
+
+```bash
+cd C:\Users\Administrator\Documents\blog
+git init
+git add .
+git commit -m "初始化博客"
+git branch -M main
+git remote add origin https://github.com/你的用户名/你的用户名.github.io.git
+git push -u origin main
+```
+
+第一次推送会让你登录 GitHub，按提示在浏览器里授权即可。
+
+4. 回到仓库页面，进入 **Settings → Pages**，把 **Source** 选成 **GitHub Actions**。
+
+### 然后等一两分钟
+
+去仓库的 **Actions** 标签页，能看到一个正在运行的任务。等它变绿，就可以访问：
+
+```
+https://你的用户名.github.io
+```
+
+### 以后每次更新
+
+```bash
+git add .
+git commit -m "新增文章：xxx"
+git push
+```
+
+推上去之后，GitHub 会自动重新构建并发布，一两分钟后线上就更新了。
+
+---
+
+## 五、常见问题
+
+**文章没显示出来？**
+检查两件事：`draft` 是不是还是 `true`；`date` 是不是写成了未来的日期。今天写的文章日期就写今天。
+
+**`hugo` 命令找不到？**
+关掉终端重新开一个。
+
+**网址里的中文变成乱码？**
+文章文件名用英文。标题写中文没问题，文件名别用中文。
+
+**推送时报 `Repository not found`？**
+按顺序查两件事：
+
+1. **仓库建了没有。** 打开 `https://github.com/你的用户名/你的用户名.github.io`，如果是 404，说明仓库还没创建，或者名字拼错了（必须严格是 `用户名.github.io`，区分大小写）。
+2. **登录的是不是本人。** GitHub 对「你没有权限的仓库」统一返回 404 而不是 403，所以**用错账号登录也会报这个错**。在文件管理器地址栏输入 `%USERPROFILE%` 回车，用记事本打开里面的 `.git-credentials`，看看 `@github.com` 前面的用户名是不是你。不是的话，把那一行删掉，重新推送时就会重新弹登录窗口。
+
+   > 本仓库已经单独配置过，会直接用登录窗口而不再读这个文件，所以正常情况下不需要动它。
+
+**第一次推送时弹出的登录窗口是什么？**
+那是 Git Credential Manager，选 **Sign in with your browser**，在浏览器里登录你的 GitHub 账号并授权即可。之后就不需要再登录了。
+
+**提交记录里的作者名字不对（比如显示成 openhands）？**
+检查 `git config user.name` 和 `git config user.email`。改完执行一次
+`git commit --amend --reset-author --no-edit` 修正最近一次提交。
+
+**样式改了没反应？**
+浏览器强制刷新一下（`Ctrl + F5`）。如果还不行，确认改的是 `assets/css/custom.css` 而不是主题目录里的文件。
+
+**代码块在浅色模式下看不清（浅底浅字）？**
+检查 `hugo.toml` 里的 `[markup.highlight] noClasses` 是不是 `false`。如果被改成 `true`，Hugo 会把配色写死进 HTML，深色和浅色就只能共用一套颜色了。这个配置段是主题要求必须保留的，别整段删掉。
+
+**想换主题怎么办？**
+`hugo.toml` 里的 `theme` 改成新主题目录名，并把新主题放进 `themes/`。注意不同主题的配置项完全不同，需要重新配。
+
+---
+
+## 技术备忘
+
+- Hugo 版本：**0.165.0 extended**（Blowfish 3.6.0 要求 0.162–0.165，不要随意升级到更高版本）
+- 主题：Blowfish **3.6.0**，已内置在 `themes/blowfish/`（不是 submodule，可以直接改）
+- 部署方式：GitHub Actions，构建产物自动发布到 Pages

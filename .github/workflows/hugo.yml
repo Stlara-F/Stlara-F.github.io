@@ -1,0 +1,79 @@
+# ============================================================
+#  把博客自动发布到 GitHub Pages
+#
+#  工作方式：每次往 main 分支推送代码，GitHub 就会自动帮你
+#  构建站点并发布上线，全程不用你手动操作。
+#
+#  只需要在 GitHub 仓库的 Settings -> Pages 里，
+#  把 Source 选成 "GitHub Actions" 即可。
+# ============================================================
+
+name: 部署博客到 GitHub Pages
+
+on:
+  # 推送到 main 分支时触发
+  push:
+    branches: [main]
+  # 也允许在网页上手动点一下触发
+  workflow_dispatch:
+
+# 给工作流发布 Pages 所需的权限
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同一时间只跑一个部署任务，避免互相覆盖
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      # 这里必须和主题要求的版本范围一致（Blowfish 3.6.0 支持 0.162–0.165）
+      HUGO_VERSION: 0.165.0
+    steps:
+      - name: 安装 Hugo
+        run: |
+          wget -q -O "${{ runner.temp }}/hugo.deb" \
+            "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb"
+          sudo dpkg -i "${{ runner.temp }}/hugo.deb"
+          hugo version
+
+      - name: 拉取仓库代码
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: 配置 Pages
+        id: pages
+        uses: actions/configure-pages@v6
+
+      - name: 构建站点
+        env:
+          HUGO_ENVIRONMENT: production
+          HUGO_ENV: production
+        run: |
+          hugo --gc --minify --baseURL "${{ steps.pages.outputs.base_url }}/"
+
+      - name: 上传构建产物
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: ./public
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: 发布到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

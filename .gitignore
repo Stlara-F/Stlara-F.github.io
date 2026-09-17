@@ -1,0 +1,18 @@
+# Hugo 构建产物
+public/
+resources/_gen/
+.hugo_build.lock
+
+# 系统 / 编辑器
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# 本地草稿与私密内容
+content/**/private/
+.env
+
+# AI 助手的工作笔记（含本机路径等私人信息，不要发布到公开仓库）
+.workbuddy-ai/

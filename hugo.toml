@@ -1,0 +1,241 @@
+# ============================================================
+#  我的博客 · 站点配置
+#  改完保存，本地预览会自动刷新，不用重启
+# ============================================================
+
+# ---------- 基础 ----------
+theme = "blowfish"
+
+# 【上线前必改】换成你的网址，注意结尾的斜杠不能少
+baseURL = "https://example.com/"
+
+# 站点标题：显示在浏览器标签页和页头
+title = "我的博客"
+
+# 语言
+defaultContentLanguage = "zh-cn"
+locale = "zh-CN"
+hasCJKLanguage = true
+
+# 站点时区。文章里只写日期（如 2026-09-18）时，按这个时区解释，
+# 否则会被当成 UTC 零点，导致当天写的文章被判为“未来”而不显示。
+timeZone = "Asia/Shanghai"
+
+# 让搜索引擎可以抓取
+enableRobotsTXT = true
+
+# 支持在文章里直接用 emoji，例如 :smile:
+enableEmoji = true
+
+# 自动摘要的长度（按词数，中文下影响不大）
+summaryLength = 30
+
+# 是否构建草稿 / 未来日期的文章
+buildDrafts = false
+buildFuture = false
+
+# ---------- 分页 ----------
+[pagination]
+  pagerSize = 10
+
+# ---------- 分类维度 ----------
+[taxonomies]
+  tag = "tags"
+  category = "categories"
+  series = "series"
+
+# ---------- 输出格式 ----------
+# home 里的 JSON 是站内搜索用的，别删
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
+# ---------- 站点地图 ----------
+[sitemap]
+  changefreq = "weekly"
+  filename = "sitemap.xml"
+  priority = 0.5
+
+# ============================================================
+#  正文解析（Markdown 渲染）
+#  这一段是主题要求必须配的，删了会导致代码高亮、表格、公式出问题
+# ============================================================
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.parser]
+      # 图片单独成段时，不要包进 <p> 里
+      wrapStandAloneImageWithinParagraph = false
+      # 允许在 Markdown 里给块级元素加 {#id .class} 属性
+      [markup.goldmark.parser.attribute]
+        block = true
+
+    [markup.goldmark.renderer]
+      # 允许在 Markdown 里直接写 HTML，写博客时很有用
+      unsafe = true
+
+    # 支持 \( 行内公式 \) 和 $$ 块级公式 $$
+    [markup.goldmark.extensions]
+      [markup.goldmark.extensions.passthrough]
+        enable = true
+        [markup.goldmark.extensions.passthrough.delimiters]
+          block = [['\[', '\]'], ['$$', '$$']]
+          inline = [['\(', '\)']]
+
+  [markup.highlight]
+    # 必须为 false。改成 true 会把配色写死进 HTML，
+    # 导致深色模式下正常的代码，在浅色模式下变成浅底浅字看不清。
+    noClasses = false
+
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 4
+
+# ============================================================
+#  主题参数：外观与功能
+# ============================================================
+[params]
+  # 配色方案。可选值：
+  # autumn / avocado / bloody / blowfish / burufugu / congo / fire / forest
+  # github / marvel / neon / noir / ocean / one-light / princess / slate / terminal
+  colorScheme = "blowfish"
+
+  # 默认明暗模式：light 或 dark
+  defaultAppearance = "dark"
+  # true = 跟随访客系统的明暗设置自动切换
+  autoSwitchAppearance = true
+
+  # 站内搜索（快捷键 /）
+  enableSearch = true
+  # 代码块右上角的复制按钮
+  enableCodeCopy = true
+  # 面包屑导航
+  enableStructuredBreadcrumbs = true
+
+  # 哪些目录算“文章列表”，首页和文章页都会用到
+  mainSections = ["posts"]
+
+  # 当前栏目在导航里高亮
+  highlightCurrentMenuArea = true
+  # 目录跟随滚动高亮
+  smartTOC = true
+
+  # 静态资源指纹算法，别乱改
+  fingerprintAlgorithm = "sha512"
+
+  # 日期显示格式。不设的话会退回英文的 "September 18, 2026"
+  dateFormat = "2006年1月2日"
+
+  # ---------- 页头 ----------
+  [params.header]
+    # basic / fixed / fixed-fill / fixed-gradient / fixed-fill-blur / floating
+    layout = "fixed"
+    mobileMenuStyle = "dropdown"
+
+  # ---------- 页脚 ----------
+  [params.footer]
+    showMenu = true
+    showCopyright = true
+    # 保留主题署名，这是使用免费主题的礼貌，建议别关
+    showThemeAttribution = true
+    showAppearanceSwitcher = true
+    showScrollToTop = true
+
+  # ---------- 首页 ----------
+  [params.homepage]
+    # page（经典博客首页）/ profile（个人名片）/ hero / card / background / landing
+    layout = "page"
+    showRecent = true
+    showRecentItems = 5
+    showMoreLink = true
+    showMoreLinkDest = "posts"
+    cardView = true
+
+  # ---------- 文章页 ----------
+  [params.article]
+    showDate = true
+    showViews = false
+    showLikes = false
+    showDateUpdated = false
+    showAuthor = true
+    showHero = false
+    showBreadcrumbs = true
+    showDraftLabel = true
+    showEdit = false
+    showHeadingAnchors = true
+    showPagination = true
+    showReadingTime = true
+    showReadingProgress = true
+    showTableOfContents = true
+    showRelatedContent = true
+    relatedContentLimit = 4
+    showTaxonomies = true
+    showWordCount = true
+    showZenMode = true
+    # 分享按钮，可选：twitter / email / telegram / whatsapp / linkedin 等
+    sharingLinks = []
+
+  # ---------- 列表页 ----------
+  [params.list]
+    showHero = false
+    showBreadcrumbs = false
+    showSummary = true
+    showTableOfContents = false
+    showCards = true
+    cardView = true
+    # 按年份分组显示
+    groupByYear = true
+
+  # ---------- 标签 / 分类总览 ----------
+  [params.taxonomy]
+    showTermCount = true
+    showHero = false
+    cardView = false
+
+  # ---------- 单个标签 / 分类页 ----------
+  [params.term]
+    showHero = false
+    groupByYear = true
+    cardView = true
+
+  # ---------- 关于你 ----------
+  [params.author]
+    name = "你的名字"
+    # 头像放在 assets/img/ 下，这里写相对路径
+    image = "img/avatar.svg"
+    headline = "在这里写一句话介绍自己"
+    bio = "这里可以写两三句更详细的自我介绍，会显示在文章底部的作者卡片里。"
+    # 社交链接。把下面几行前面的 # 去掉并改成你自己的地址即可
+    # links = [
+    #   { github = "https://github.com/你的用户名" },
+    #   { x-twitter = "https://x.com/你的用户名" },
+    #   { email = "mailto:你的邮箱" },
+    # ]
+    links = []
+
+# ============================================================
+#  导航菜单
+# ============================================================
+[menu]
+  [[menu.main]]
+    name = "文章"
+    pageRef = "posts"
+    weight = 10
+
+  [[menu.main]]
+    name = "标签"
+    pageRef = "tags"
+    weight = 20
+
+  [[menu.main]]
+    name = "关于"
+    pageRef = "about"
+    weight = 30
+
+  [[menu.footer]]
+    name = "标签"
+    pageRef = "tags"
+    weight = 10
+
+  [[menu.footer]]
+    name = "关于"
+    pageRef = "about"
+    weight = 20
