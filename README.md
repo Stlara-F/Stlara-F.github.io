@@ -16,10 +16,58 @@ blog/
 ├── assets/
 │   ├── css/custom.css     自定义样式，改外观主要改这个文件
 │   └── img/avatar.svg     头像
+├── static/                原样复制到网站根目录的文件（站点图标就在这里）
 ├── themes/blowfish/       主题本体（一般不用动）
 ├── public/                构建产物，自动生成，不用管也不用提交
 └── .github/workflows/     自动部署脚本
 ```
+
+---
+
+## 个性化清单（把占位符换成你自己的）
+
+下面这几处现在还是占位内容，**改完提交推送就会自动生效**。全都集中在 `hugo.toml`：
+
+| 想改什么 | 位置（`hugo.toml` 里搜关键词） | 现在是什么 |
+| --- | --- | --- |
+| 站点标题（浏览器标签页 + 页头） | `title =` | `我的博客` |
+| **页脚署名 + 文章底部作者卡片** | `[params.author]` → `name =` | `你的名字` |
+| 作者卡片里的一句话 | `[params.author]` → `headline =` | `在这里写一句话介绍自己` |
+| 作者卡片里的详细介绍 | `[params.author]` → `bio =` | `这里可以写两三句更详细的自我介绍…` |
+| 作者头像 | `[params.author]` → `image =` | `img/avatar.svg`（换成 `assets/img/` 下的真实图片） |
+| 社交链接（GitHub、邮箱等） | `[[params.social]]` 那几段 | 注释状态，取消注释并填地址 |
+| 关于页正文 | `content/about.md` | 示例内容 |
+| 首页顶部那段话 | `content/_index.md` | 示例内容 |
+
+改完记得本地看一眼：
+
+```bash
+hugo server
+# 浏览器打开 http://localhost:1313/
+```
+
+### 换站点图标
+
+图标在 `static/` 下（16/32/ico/apple-touch/android + `site.webmanifest`）。
+现在用的是蓝色圆角方块 + 白色字母 **S**。
+
+想换字母或换配色，用这个脚本重新生成一整套：
+
+```bash
+# 换字母
+python .workbuddy-ai/tools/make_favicon.py --letter 博
+
+# 换配色（斜向渐变的两端 + 浏览器主题色）
+python .workbuddy-ai/tools/make_favicon.py \
+    --from "#f472b6" --to "#db2777" --theme-color "#db2777"
+
+# 换标签页里的名字
+python .workbuddy-ai/tools/make_favicon.py --name "我的博客"
+```
+
+> 提示：16×16 是浏览器标签页的实际尺寸，**只有笔画少的字形能认出来**。
+> 单个大写字母最稳；中文单字建议选笔画少的（如「一」「山」），
+> 像「博」这种十几笔的在小尺寸下会糊成一团。
 
 ---
 
