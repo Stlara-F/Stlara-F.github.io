@@ -203,11 +203,19 @@ buildFuture = false
     image = "img/avatar.svg"
     headline = "在这里写一句话介绍自己"
     bio = "这里可以写两三句更详细的自我介绍，会显示在文章底部的作者卡片里。"
-    # 社交链接。把下面几行前面的 # 去掉并改成你自己的地址即可
+    # 社交链接。把下面整块（含结尾的 ] ）前面的 # 去掉，
+    # 并改成你自己的地址即可。
+    # 注意两点：
+    #   1) 取消注释时，把本行下面那行「links = []」一起删掉，
+    #      否则同一个键写两遍，Hugo 会直接报错、整站构建失败。
+    #   2) email 那一项只填邮箱地址本身，不要写 "mailto:" 前缀，
+    #      主题会自动加上（写前缀会变成 mailto:mailto:…）。
+    # 可用的名称就是图标名，例如：github / x-twitter / email /
+    # bilibili 类的中文站点可用 globe，更多见 themes/blowfish/assets/icons/
     # links = [
     #   { github = "https://github.com/你的用户名" },
     #   { x-twitter = "https://x.com/你的用户名" },
-    #   { email = "mailto:你的邮箱" },
+    #   { email = "你的邮箱" },
     # ]
     links = []
 

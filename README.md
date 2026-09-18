@@ -35,7 +35,7 @@ blog/
 | 作者卡片里的一句话 | `[params.author]` → `headline =` | `在这里写一句话介绍自己` |
 | 作者卡片里的详细介绍 | `[params.author]` → `bio =` | `这里可以写两三句更详细的自我介绍…` |
 | 作者头像 | `[params.author]` → `image =` | `img/avatar.svg`（换成 `assets/img/` 下的真实图片） |
-| 社交链接（GitHub、邮箱等） | `[[params.social]]` 那几段 | 注释状态，取消注释并填地址 |
+| 社交链接（GitHub、邮箱等） | `[params.author]` → `links = [` 那几行 | 注释状态。取消注释时**记得把下面那行空的 `links = []` 一起删掉**（同一键写两遍会导致构建失败） |
 | 关于页正文 | `content/about.md` | 示例内容 |
 | 首页顶部那段话 | `content/_index.md` | 示例内容 |
 
@@ -55,14 +55,14 @@ hugo server
 
 ```bash
 # 换字母
-python .workbuddy-ai/tools/make_favicon.py --letter 博
+python tools/make_favicon.py --letter 博
 
 # 换配色（斜向渐变的两端 + 浏览器主题色）
-python .workbuddy-ai/tools/make_favicon.py \
+python tools/make_favicon.py \
     --from "#f472b6" --to "#db2777" --theme-color "#db2777"
 
 # 换标签页里的名字
-python .workbuddy-ai/tools/make_favicon.py --name "我的博客"
+python tools/make_favicon.py --name "我的博客"
 ```
 
 > 提示：16×16 是浏览器标签页的实际尺寸，**只有笔画少的字形能认出来**。
