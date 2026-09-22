@@ -253,10 +253,35 @@ python tools/check.py --strict   # 警告也算失败
 `.github/workflows/hugo.yml` 分三段，按顺序跑：
 
 1. **规范检查** —— 跑 `tools/check.py`，再用 actionlint 把工作流文件自己也查一遍
-2. **构建站点** —— 装 Hugo、构建、确认产物里有 `index.html` 且没有 example.com
+2. **构建站点** —— 装 Hugo、构建、确认产物里有 `index.html`，
+   且首页的 canonical 地址和站点真实网址一致
 3. **发布上线** —— 只有推送到 main 才跑
 
 提 PR 时只跑前两段，不会发布，这样能在合并前发现问题。
+
+### 一个容易搞错的设置：Pages 的 Source
+
+仓库 **Settings → Pages → Build and deployment → Source** 必须选
+**GitHub Actions**，不能选「Deploy from a branch」。
+
+如果选成了分支，GitHub 会另外跑一条内置的 `pages build and deployment`，
+用 **Jekyll** 去构建这个仓库 —— 而这是 Hugo 站点，Jekyll 必然报错：
+
+```
+Liquid Exception: Invalid Date: '{}' is not a valid datetime.
+ERROR: YOUR SITE COULD NOT BE BUILT:
+```
+
+于是每次提交都会挂一个红叉。**这个红叉跟我们的工作流无关**，
+`部署博客到 GitHub Pages` 那条才是真正决定线上内容的。
+
+怎么确认现在是哪种：
+
+```bash
+gh api repos/Stlara-F/Stlara-F.github.io/pages --jq '.build_type'
+# "workflow" = 正确（由 Actions 部署）
+# "legacy"   = 还在按分支构建，需要去设置里改
+```
 
 ---
 
