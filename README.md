@@ -199,6 +199,23 @@ https://你的用户名.github.io
 
 ### 以后每次更新
 
+**推荐用发布脚本**，它会在提交前先检查一遍，有问题就不让你提交：
+
+```bash
+./tools/publish.sh "新增文章：xxx"
+```
+
+流程是：规范检查 → 显示改动 → 让你确认 → 提交 → 推送。
+最后一步推送前会再问一次，所以不用担心手滑。
+
+只想看看有没有问题、不提交：
+
+```bash
+./tools/publish.sh --check
+```
+
+也可以自己敲 git 命令，只是**少了一道检查**：
+
 ```bash
 git add .
 git commit -m "新增文章：xxx"
@@ -206,6 +223,40 @@ git push
 ```
 
 推上去之后，GitHub 会自动重新构建并发布，一两分钟后线上就更新了。
+
+### 规范检查在查什么
+
+`tools/check.py` 是本地和 CI 共用的**同一个脚本**，所以不会出现
+「本地过了、线上挂了」这种两边规则对不上的情况。
+
+查这些（**错误会阻断提交，警告只是提醒**）：
+
+| 类别 | 查什么 |
+| --- | --- |
+| 配置 | `hugo.toml` 是不是合法 TOML（顺带抓「同一个键写两遍」）、`baseURL` 是不是还写着 example.com、`timeZone` 在不在 |
+| 社交链接 | 图标名在主题里有没有对应文件、email 有没有误写 `mailto:` 前缀 |
+| 菜单 | 每一项有没有 name 和 url |
+| 内容 | front matter 的 title / date 在不在、draft 是不是 true/false |
+| 图标 | `site.webmanifest` 引用的文件存不存在 |
+| 卫生 | 构建产物（public/）有没有被误提交、编辑器残留的探针文件 |
+| 安全 | 有没有把 token / 密钥写进文件里 |
+
+单独跑：
+
+```bash
+python tools/check.py            # 有问题退出码 1
+python tools/check.py --strict   # 警告也算失败
+```
+
+### 线上做了哪些检查
+
+`.github/workflows/hugo.yml` 分三段，按顺序跑：
+
+1. **规范检查** —— 跑 `tools/check.py`，再用 actionlint 把工作流文件自己也查一遍
+2. **构建站点** —— 装 Hugo、构建、确认产物里有 `index.html` 且没有 example.com
+3. **发布上线** —— 只有推送到 main 才跑
+
+提 PR 时只跑前两段，不会发布，这样能在合并前发现问题。
 
 ---
 

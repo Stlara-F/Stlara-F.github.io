@@ -3,77 +3,182 @@
 #
 #  工作方式：每次往 main 分支推送代码，GitHub 就会自动帮你
 #  构建站点并发布上线，全程不用你手动操作。
+#  提 PR 时只做检查、不发布，用来提前发现问题。
 #
 #  只需要在 GitHub 仓库的 Settings -> Pages 里，
 #  把 Source 选成 "GitHub Actions" 即可。
+#
+#  三段流程：规范检查 -> 构建 -> 发布。
+#  检查和本地 `python tools/check.py` 跑的是同一个脚本，
+#  规则不会两边各写一份然后慢慢对不上。
 # ============================================================
 
 name: 部署博客到 GitHub Pages
 
 on:
-  # 推送到 main 分支时触发
+  # 推送到 main 分支时触发（会真的发布上线）
   push:
+    branches: [main]
+  # 提 PR 时只检查不发布
+  pull_request:
     branches: [main]
   # 也允许在网页上手动点一下触发
   workflow_dispatch:
 
-# 给工作流发布 Pages 所需的权限
+# 默认只给读权限，需要写 Pages 的 job 单独申请（最小权限原则）
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
-# 同一时间只跑一个部署任务，避免互相覆盖
+# 同一个分支同时跑多个任务时排队，不互相打断
+# 部署中途取消会留下半截站点，所以 cancel-in-progress 必须是 false
 concurrency:
-  group: pages
+  group: pages-${{ github.ref }}
   cancel-in-progress: false
 
 defaults:
   run:
     shell: bash
 
+env:
+  # 必须和主题要求的版本范围一致（Blowfish 3.6.0 支持 0.162–0.165）
+  # 改这里之前先看 themes/blowfish/theme.toml 里的 hugoVersion
+  HUGO_VERSION: 0.165.0
+
 jobs:
-  build:
+  # ----------------------------------------------------------
+  # 第一段：规范检查（快，几秒钟）
+  # ----------------------------------------------------------
+  check:
+    name: 规范检查
     runs-on: ubuntu-latest
-    env:
-      # 这里必须和主题要求的版本范围一致（Blowfish 3.6.0 支持 0.162–0.165）
-      HUGO_VERSION: 0.165.0
+    timeout-minutes: 5
     steps:
-      - name: 安装 Hugo
-        run: |
-          wget -q -O "${{ runner.temp }}/hugo.deb" \
-            "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb"
-          sudo dpkg -i "${{ runner.temp }}/hugo.deb"
-          hugo version
-
       - name: 拉取仓库代码
-        uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
+        uses: actions/checkout@v7.0.1
 
+      - name: 检查配置与内容规范
+        # ubuntu 自带 Python 3.11+，标准库里有 tomllib，不用装任何东西
+        # 只有「错误」会让这一步失败；警告只是提醒，不阻断发布
+        run: python3 tools/check.py
+
+      # 连工作流文件自己也检查一遍：拼错的字段名、无效的 if 条件、
+      # 漏引号的表达式，这些只有跑起来才会报错，白白浪费一次运行
+      # 不传任何参数 = 用默认行为：发现问题时让这一步失败
+      - name: 检查工作流文件写法
+        uses: rhysd/actionlint@v1.7.12
+
+  # ----------------------------------------------------------
+  # 第二段：构建站点
+  # PR 也会跑，这样构建错误在合并前就能发现
+  # ----------------------------------------------------------
+  build:
+    name: 构建站点
+    needs: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # configure-pages 和上传产物需要 Pages 权限
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - name: 拉取仓库代码
+        uses: actions/checkout@v7.0.1
+
+      - name: 安装 Hugo
+        env:
+          # 同样走环境变量，不把 ${{ }} 直接拼进 shell 命令
+          TMP_DIR: ${{ runner.temp }}
+        run: |
+          set -euo pipefail
+          wget -q -O "${TMP_DIR}/hugo.deb" \
+            "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb"
+          sudo dpkg -i "${TMP_DIR}/hugo.deb"
+          # 装完对一下版本：装错了后面所有报错都会指向莫名其妙的地方
+          installed="$(hugo version | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)"
+          if [ "$installed" != "$HUGO_VERSION" ]; then
+            echo "::error::Hugo 版本对不上：想要 ${HUGO_VERSION}，实际 ${installed}"
+            exit 1
+          fi
+          echo "已安装 Hugo ${installed}"
+
+      # 只有真正要发布时才需要 Pages 的真实网址
       - name: 配置 Pages
         id: pages
-        uses: actions/configure-pages@v6
+        if: github.event_name != 'pull_request'
+        uses: actions/configure-pages@v6.0.0
 
       - name: 构建站点
         env:
           HUGO_ENVIRONMENT: production
           HUGO_ENV: production
+          # 走环境变量而不是直接把 ${{ }} 拼进 shell 命令，
+          # 避免别人能用特殊字符「逃出」引号执行任意命令
+          PAGES_BASE_URL: ${{ steps.pages.outputs.base_url }}
         run: |
-          hugo --gc --minify --baseURL "${{ steps.pages.outputs.base_url }}/"
+          set -euo pipefail
+          # --baseURL 必须用 Pages 给的真实网址，否则线上 canonical / RSS 里
+          # 会是配置文件里那个地址。PR 时用配置文件里的值就够了。
+          if [ -n "${PAGES_BASE_URL}" ]; then
+            hugo --gc --minify --printPathWarnings --baseURL "${PAGES_BASE_URL}/"
+          else
+            hugo --gc --minify --printPathWarnings
+          fi
+
+      - name: 检查构建产物
+        env:
+          PAGES_BASE_URL: ${{ steps.pages.outputs.base_url }}
+        run: |
+          set -euo pipefail
+          if [ ! -f public/index.html ]; then
+            echo "::error::构建后没有 public/index.html，站点是空的"
+            exit 1
+          fi
+
+          # 线上地址必须在 canonical / og:url 里是对的，否则搜索引擎和
+          # 分享卡片都会指向错误的地方。PR 时拿配置文件里的值当基准。
+          expected="${PAGES_BASE_URL:-}"
+          if [ -z "$expected" ]; then
+            expected="$(grep -m1 '^baseURL' hugo.toml | sed 's/.*= *"//; s/"[[:space:]]*$//')"
+          fi
+
+          # --minify 会把属性引号去掉，所以 href= 后面可能带引号也可能不带
+          canonical="$(grep -o 'canonical href=[^ >]*' public/index.html \
+                       | head -1 | sed 's/.*href=//; s/^"//; s/"$//')"
+          if [ -z "$canonical" ]; then
+            echo "::error::public/index.html 里找不到 canonical，站点地址没法确认"
+            exit 1
+          fi
+          case "$canonical" in
+            "$expected"*) echo "站点地址 OK：$canonical" ;;
+            *) echo "::error::canonical 是 $canonical，应该以 $expected 开头（baseURL 没生效？）"
+               exit 1 ;;
+          esac
+
+          echo "构建产物 OK（$(find public -name '*.html' | wc -l) 个页面）"
 
       - name: 上传构建产物
-        uses: actions/upload-pages-artifact@v5
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v5.0.0
         with:
           path: ./public
 
+  # ----------------------------------------------------------
+  # 第三段：发布上线（只有推送到 main 才跑）
+  # ----------------------------------------------------------
   deploy:
+    name: 发布上线
+    needs: build
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
     steps:
       - name: 发布到 GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@v5.0.1
