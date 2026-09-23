@@ -35,10 +35,6 @@ concurrency:
   group: pages-${{ github.ref }}
   cancel-in-progress: false
 
-defaults:
-  run:
-    shell: bash
-
 env:
   # 必须和主题要求的版本范围一致（Blowfish 3.6.0 支持 0.162–0.165）
   # 改这里之前先看 themes/blowfish/theme.toml 里的 hugoVersion

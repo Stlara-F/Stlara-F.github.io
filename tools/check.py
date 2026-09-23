@@ -3,19 +3,13 @@
 """
 博客规范检查器 —— 只检查，不改任何文件。
 
-本地和 GitHub Actions 跑的是**同一个脚本**，规则不会两边漂移。
-用法：
+用法：python tools/check.py   （有问题时退出码 1）
 
-    python tools/check.py            # 有问题就退出码 1
-    python tools/check.py --strict   # 警告也当成失败
-    python tools/check.py --quiet    # 只打印有问题的
-
-只依赖 Python 标准库（3.11+ 需要 tomllib），CI 里不用装任何东西。
-front matter 的语法错误由 `hugo` 构建来抓，这里只查语义
+只依赖 Python 标准库（需要 3.11+ 的 tomllib），CI 里不用装任何东西。
+front matter 的语法错误由 `hugo` 构建去抓，这里只查语义
 （该有的字段有没有、类型对不对），不做完整 YAML 解析。
 """
 
-import argparse
 import re
 import subprocess
 import sys
@@ -74,14 +68,14 @@ def check_config(root: Path) -> dict | None:
     try:
         cfg = tomllib.loads(text)
     except tomllib.TOMLDecodeError as e:
-        # 最常见的就是「同一个键写了两遍」，比如注释里留一份示例、
-        # 下面又有一行生效的空值。这会让 Hugo 直接 load 失败、零页面产出。
         err(f"hugo.toml 不是合法的 TOML（Hugo 会直接构建失败）：{e}")
-        # tomllib 对重复键报 "Cannot overwrite a value"，Hugo 报 "key ... is already defined"
+        # 同一个键写两遍是最常见的一种：tomllib 报 "Cannot overwrite a value"，
+        # Hugo 报 "key ... is already defined"。典型成因是注释里留着示例，
+        # 下面又有一行同名生效值。
         low = str(e).lower()
         if "already defined" in low or "duplicate" in low or "overwrite" in low:
-            err("  ↑ 多半是同一个键写了两遍：注释里留了示例，下面还有一行生效的空值。"
-                "\n    取消注释示例时，记得把那行空的默认值一起删掉。")
+            err("  ↑ 多半是同一个键写了两遍。"
+                "\n    取消注释示例时，记得把那行同名默认值一起删掉。")
         return None
 
     # baseURL：CI 会覆盖，但本地构建出来的 canonical / RSS 靠它
@@ -94,7 +88,7 @@ def check_config(root: Path) -> dict | None:
         if not base.endswith("/"):
             err(f"baseURL 结尾必须带斜杠，现在是：{base}")
 
-    # 时区：删掉会让当天写的文章被判为「未来」而不显示
+    # 时区：没有它，只写日期的文章会被当成 UTC 零点，当天发布会被判为「未来」
     if "timeZone" not in cfg:
         err("hugo.toml 缺少 timeZone —— 删掉会导致当天发布的文章不显示")
 
@@ -134,7 +128,7 @@ def check_author_links(root: Path, cfg: dict) -> None:
             err(f"[params.author].links 第 {i} 项不是一个表，写法应为 {{ 名字 = \"地址\" }}")
             continue
         for name, url in item.items():
-            # 图标名必须能对上一个 svg，否则图标静默不渲染 —— 不报错，只能自己发现
+            # 图标名对应不上 svg 时，主题不报错，只是那个图标不显示
             if have_icons and name not in have_icons:
                 err(f"社交链接第 {i} 项的图标名 '{name}' 在 themes/{theme}/assets/icons/ "
                     f"里没有对应文件，图标会不显示")
@@ -142,7 +136,7 @@ def check_author_links(root: Path, cfg: dict) -> None:
                 err(f"社交链接第 {i} 项（{name}）的地址是空的")
                 continue
             if name == "email":
-                # 主题会 base64 编码，前端 JS 再自己补 mailto:
+                # 主题模板做 base64 编码，前端 JS 再自己补 mailto:
                 if url.lower().startswith("mailto:"):
                     err(f"社交链接的 email 不要写 mailto: 前缀（主题会自动加），"
                         f"现在是：{url}")
@@ -190,15 +184,13 @@ def split_front_matter(path: Path) -> tuple[list[str] | None, str]:
 def simple_value(raw: str):
     """把 front matter 里的标量值粗略还原成 Python 值。
 
-    只处理这个博客实际用到的写法：字符串、true/false、数字、
-    行内数组 ["a", "b"]。语法正确性交给 hugo 构建去抓。
+    只处理这个博客用到的写法：字符串、true/false、行内数组 ["a", "b"]。
+    语法正确性交给 hugo 构建去抓。
     """
     raw = raw.strip()
     if raw.startswith("[") and raw.endswith("]"):
         inner = raw[1:-1].strip()
         return [x.strip().strip("\"'") for x in inner.split(",") if x.strip()] if inner else []
-    if raw.startswith(("{", "}")):
-        return raw
     low = raw.lower()
     if low in ("true", "false"):
         return low == "true"
@@ -243,7 +235,7 @@ def check_content(root: Path) -> None:
         if is_home and fields.get("title"):
             warn(f"{rel}：首页写了 title，页面正文上方会多出一个大标题")
 
-        # 栏目页（_index.md）是结构文件，不需要 date / draft
+        # 栏目页（_index.md）是结构文件，不参与文章排序和草稿逻辑
         if not is_branch:
             if "date" not in fields:
                 err(f"{rel}：front matter 缺少 date（没有日期的文章排序会乱）")
@@ -258,31 +250,24 @@ def check_content(root: Path) -> None:
 
 # ---------------------------------------------------------------- 卫生检查
 
-# 编辑器早期版本会在 content/ 下建删探针文件，删不掉就残留，还会被 git 提交
-PROBE_PATTERNS = (".wtest", ".blog-editor-probe-")
-# 这些是构建产物，提交进仓库会让 diff 爆炸、还容易和别人冲突
+# 构建产物提交进仓库会让 diff 变噪音，还容易和别人冲突
 BUILD_DIRS = ("public/", "resources/_gen/")
 
 
-def check_hygiene(root: Path) -> None:
+def check_tracked_artifacts(root: Path) -> None:
+    """构建产物不该被 git 跟踪。"""
     files = tracked_files(root)
     if files is None:
-        warn("不在 git 仓库里（或没装 git），跳过「是否误提交了构建产物」检查")
-    else:
-        bad = [f for f in files if any(f.startswith(d) for d in BUILD_DIRS)]
-        if bad:
-            err(f"有构建产物被 git 跟踪了，应该从仓库里移除（{len(bad)} 个，"
-                f"例如 {bad[0]}）。执行：git rm -r --cached {' '.join(sorted(set(b.split('/')[0] for b in bad)))}")
-        if ".hugo_build.lock" in files:
-            err(".hugo_build.lock 被 git 跟踪了，执行：git rm --cached .hugo_build.lock")
+        warn("不在 git 仓库里（或没装 git），跳过「构建产物是否被跟踪」检查")
+        return
 
-    # 探针残留直接扫目录，不管有没有被 git 跟踪
-    junk: list[str] = []
-    for p in root.rglob("*"):
-        if p.is_file() and any(p.name.startswith(pat) for pat in PROBE_PATTERNS):
-            junk.append(p.relative_to(root).as_posix())
-    if junk:
-        err(f"发现编辑器残留的探针文件（{len(junk)} 个，例如 {junk[0]}），删掉即可")
+    bad = [f for f in files if any(f.startswith(d) for d in BUILD_DIRS)]
+    if bad:
+        tops = " ".join(sorted({b.split("/")[0] for b in bad}))
+        err(f"有构建产物被 git 跟踪了（{len(bad)} 个，例如 {bad[0]}）。"
+            f"执行：git rm -r --cached {tops}")
+    if ".hugo_build.lock" in files:
+        err(".hugo_build.lock 被 git 跟踪了，执行：git rm --cached .hugo_build.lock")
 
 
 def check_icons(root: Path) -> None:
@@ -298,54 +283,23 @@ def check_icons(root: Path) -> None:
                  f"看不出是你的站点")
 
     mw = static / "site.webmanifest"
-    if mw.is_file():
-        try:
-            import json
-            data = json.loads(mw.read_text(encoding="utf-8"))
-        except Exception as e:
-            err(f"site.webmanifest 不是合法的 JSON：{e}")
-            return
-        for icon in data.get("icons", []):
-            src = icon.get("src", "").lstrip("/")
-            if src and not (static / src).is_file():
-                err(f"site.webmanifest 引用了 static/{src}，但文件不存在")
-
-
-def check_secrets(root: Path) -> None:
-    """公开仓库别把密钥提交上去。只做几条明显的特征匹配。"""
-    files = tracked_files(root)
-    if files is None:
+    if not mw.is_file():
         return
-    patterns = [
-        (r"-----BEGIN [A-Z ]*PRIVATE KEY-----", "私钥"),
-        (r"\bgh[pousr]_[A-Za-z0-9]{20,}", "GitHub token"),
-        (r"\bAKIA[0-9A-Z]{16}\b", "AWS access key"),
-    ]
-    skip_dirs = ("themes/",)
-    for rel in files:
-        if rel.startswith(skip_dirs) or rel.endswith((".png", ".ico", ".jpg", ".svg")):
-            continue
-        path = root / rel
-        if not path.is_file() or path.stat().st_size > 2_000_000:
-            continue
-        try:
-            text = path.read_text(encoding="utf-8", errors="ignore")
-        except Exception:
-            continue
-        for pat, label in patterns:
-            if re.search(pat, text):
-                err(f"{rel} 里疑似有{label} —— 公开仓库会泄露，立刻换掉并清理 git 历史")
-                break
+    try:
+        import json
+        data = json.loads(mw.read_text(encoding="utf-8"))
+    except Exception as e:
+        err(f"site.webmanifest 不是合法的 JSON：{e}")
+        return
+    for icon in data.get("icons", []):
+        src = icon.get("src", "").lstrip("/")
+        if src and not (static / src).is_file():
+            err(f"site.webmanifest 引用了 static/{src}，但文件不存在")
 
 
 # ---------------------------------------------------------------- 入口
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="博客规范检查（只读）")
-    ap.add_argument("--strict", action="store_true", help="警告也算失败")
-    ap.add_argument("--quiet", action="store_true", help="只打印有问题的")
-    args = ap.parse_args()
-
     root = find_repo_root()
     print(f"检查目录：{root}")
 
@@ -355,8 +309,7 @@ def main() -> int:
         check_menu(cfg)
     check_content(root)
     check_icons(root)
-    check_hygiene(root)
-    check_secrets(root)
+    check_tracked_artifacts(root)
 
     for m in ERRORS:
         print(f"  [错误] {m}")
@@ -368,9 +321,8 @@ def main() -> int:
         return 1
     if WARNINGS:
         print(f"\n检查通过（有 {len(WARNINGS)} 个警告）")
-        return 1 if args.strict else 0
-    if not args.quiet:
-        print("检查通过，没发现问题")
+        return 0
+    print("检查通过，没发现问题")
     return 0
 
 

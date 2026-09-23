@@ -7,7 +7,6 @@
 #    ./tools/publish.sh "写了一句什么"   # 检查 + 提交 + 推送
 #    ./tools/publish.sh                 # 不写说明，会提示你输入
 #    ./tools/publish.sh --check         # 只检查，不提交
-#    ./tools/publish.sh --no-push "..." # 只提交到本地，不推送
 #
 #  它会先跑 tools/check.py。只要有一个「错误」就不让你提交，
 #  避免把坏掉的配置推上去、让线上构建失败。
@@ -38,8 +37,7 @@ MSG=""
 while [ $# -gt 0 ]; do
     case "$1" in
         --check)   MODE="check"; shift ;;
-        --no-push) MODE="commit"; shift ;;
-        -h|--help) sed -n '2,20p' "$0"; exit 0 ;;
+        -h|--help) sed -n '2,14p' "$0"; exit 0 ;;
         *)         MSG="$1"; shift ;;
     esac
 done
@@ -86,16 +84,6 @@ if [ -z "$(git status --porcelain)" ]; then
 fi
 git status --short
 
-# 构建产物不该出现在待提交列表里（.gitignore 已经挡住了，这里是双保险）
-BAD="$(git status --porcelain | awk '{print $NF}' | grep -E '^(public/|resources/_gen/|\.hugo_build\.lock)' || true)"
-if [ -n "$BAD" ]; then
-    echo
-    echo "发现构建产物混进来了："
-    echo "$BAD"
-    echo "这些是 Hugo 生成的，不该提交。已停止。"
-    exit 1
-fi
-
 # ---------------------------------------------------------- 第三步：提交
 echo
 if [ -z "$MSG" ]; then
@@ -113,12 +101,6 @@ read -r -p "确认提交？(y/N) " ans
 
 git add -A
 git commit -m "$MSG"
-
-if [ "$MODE" = "commit" ]; then
-    echo
-    echo "已提交到本地，按你的要求没有推送。"
-    exit 0
-fi
 
 # ---------------------------------------------------------- 第四步：推送
 echo

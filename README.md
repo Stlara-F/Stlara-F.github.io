@@ -233,19 +233,17 @@ git push
 
 | 类别 | 查什么 |
 | --- | --- |
-| 配置 | `hugo.toml` 是不是合法 TOML（顺带抓「同一个键写两遍」）、`baseURL` 是不是还写着 example.com、`timeZone` 在不在 |
+| 配置 | `hugo.toml` 是不是合法 TOML（顺带抓「同一个键写两遍」）、`baseURL` 是不是还写着 example.com、`timeZone` 在不在、主题目录完不完整 |
 | 社交链接 | 图标名在主题里有没有对应文件、email 有没有误写 `mailto:` 前缀 |
 | 菜单 | 每一项有没有 name 和 url |
 | 内容 | front matter 的 title / date 在不在、draft 是不是 true/false |
 | 图标 | `site.webmanifest` 引用的文件存不存在 |
-| 卫生 | 构建产物（public/）有没有被误提交、编辑器残留的探针文件 |
-| 安全 | 有没有把 token / 密钥写进文件里 |
+| 仓库 | 构建产物（public/）有没有被误提交 |
 
 单独跑：
 
 ```bash
-python tools/check.py            # 有问题退出码 1
-python tools/check.py --strict   # 警告也算失败
+python tools/check.py    # 有问题退出码 1
 ```
 
 ### 线上做了哪些检查
@@ -264,18 +262,18 @@ python tools/check.py --strict   # 警告也算失败
 仓库 **Settings → Pages → Build and deployment → Source** 必须选
 **GitHub Actions**，不能选「Deploy from a branch」。
 
-如果选成了分支，GitHub 会另外跑一条内置的 `pages build and deployment`，
-用 **Jekyll** 去构建这个仓库 —— 而这是 Hugo 站点，Jekyll 必然报错：
+选成分支的话，GitHub 会另外跑一条内置的 `pages build and deployment`，
+用 **Jekyll** 去构建这个仓库。这是 Hugo 站点，Jekyll 建不了：
 
 ```
 Liquid Exception: Invalid Date: '{}' is not a valid datetime.
 ERROR: YOUR SITE COULD NOT BE BUILT:
 ```
 
-于是每次提交都会挂一个红叉。**这个红叉跟我们的工作流无关**，
-`部署博客到 GitHub Pages` 那条才是真正决定线上内容的。
+结果就是每次提交都多一个红叉。真正决定线上内容的是
+`部署博客到 GitHub Pages` 那条工作流。
 
-怎么确认现在是哪种：
+确认现在是哪种：
 
 ```bash
 gh api repos/Stlara-F/Stlara-F.github.io/pages --jq '.build_type'
