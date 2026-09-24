@@ -12,9 +12,9 @@
 先按 1024px 画，再用 LANCZOS 缩到各尺寸，边缘才干净。
 
 用法：
-    python make_favicon.py            # 用默认的 "S"
-    python make_favicon.py --letter 博
-    python make_favicon.py --bg "#111827" --from "#60a5fa" --to "#2563eb"
+    python tools/make_favicon.py                    # 用默认的 "S"
+    python tools/make_favicon.py --letter 博
+    python tools/make_favicon.py --from "#f472b6" --to "#db2777" --theme-color "#db2777"
 """
 
 from __future__ import annotations
@@ -108,7 +108,7 @@ def build_master(letter: str, c_from: tuple, c_to: tuple) -> Image.Image:
 def find_site_root(start: Path) -> Path:
     """
     从脚本位置往上找，直到看见 hugo.toml —— 那就是站点根目录。
-    这样脚本放在 tools/、.workbuddy-ai/tools/ 或任意子目录都能用。
+    这样脚本放在 tools/ 或任意子目录都能用。
     """
     for candidate in [start, *start.parents]:
         if (candidate / "hugo.toml").exists():
@@ -118,7 +118,6 @@ def find_site_root(start: Path) -> Path:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--out", default=None, help="输出目录，默认站点 static/")
     parser.add_argument("--letter", default="S", help="图标里的字符，默认 S")
     parser.add_argument("--from", dest="c_from", default="#60a5fa")
     parser.add_argument("--to", dest="c_to", default="#2563eb")
@@ -127,7 +126,7 @@ def main() -> int:
     args = parser.parse_args()
 
     site = find_site_root(Path(__file__).resolve().parent)
-    out = Path(args.out) if args.out else site / "static"
+    out = site / "static"
     out.mkdir(parents=True, exist_ok=True)
 
     master = build_master(args.letter, hex_to_rgb(args.c_from), hex_to_rgb(args.c_to))

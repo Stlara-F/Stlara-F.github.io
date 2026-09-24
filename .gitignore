@@ -10,9 +10,5 @@ Thumbs.db
 .vscode/
 *.swp
 
-# 本地草稿与私密内容
-content/**/private/
-.env
-
-# AI 助手的工作笔记（含本机路径等私人信息，不要发布到公开仓库）
+# 本地工作笔记（含本机路径等信息，不发布）
 .workbuddy-ai/

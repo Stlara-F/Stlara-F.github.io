@@ -8,6 +8,9 @@
 只依赖 Python 标准库（需要 3.11+ 的 tomllib），CI 里不用装任何东西。
 front matter 的语法错误由 `hugo` 构建去抓，这里只查语义
 （该有的字段有没有、类型对不对），不做完整 YAML 解析。
+
+另有两件事 Hugo 自己不会拦，在这里兜住：Hugo 版本越出主题声明的区间
+（Hugo 只发 WARN、构建照样成功），以及工作流没调用本脚本。
 """
 
 import re
@@ -70,12 +73,11 @@ def check_config(root: Path) -> dict | None:
     except tomllib.TOMLDecodeError as e:
         err(f"hugo.toml 不是合法的 TOML（Hugo 会直接构建失败）：{e}")
         # 同一个键写两遍是最常见的一种：tomllib 报 "Cannot overwrite a value"，
-        # Hugo 报 "key ... is already defined"。典型成因是注释里留着示例，
-        # 下面又有一行同名生效值。
+        # Hugo 报 "key ... is already defined"
         low = str(e).lower()
         if "already defined" in low or "duplicate" in low or "overwrite" in low:
-            err("  ↑ 多半是同一个键写了两遍。"
-                "\n    取消注释示例时，记得把那行同名默认值一起删掉。")
+            err("  ↑ 同一个键写了两遍。检查有没有哪个键被重复写了一行"
+                "（例如 title 或 links），删掉多余的那行。")
         return None
 
     # baseURL：CI 会覆盖，但本地构建出来的 canonical / RSS 靠它
@@ -98,7 +100,7 @@ def check_config(root: Path) -> dict | None:
     if "locale" not in cfg:
         warn("hugo.toml 没有 locale，日期等本地化会退回英文")
 
-    # 主题目录必须真的存在
+    # 主题目录必须真的存在；theme.toml 是主题的清单文件
     theme = cfg.get("theme")
     if not theme:
         err("hugo.toml 缺少 theme")
@@ -108,6 +110,95 @@ def check_config(root: Path) -> dict | None:
         err(f"themes/{theme}/ 里没有 theme.toml，主题没装完整")
 
     return cfg
+
+
+# ---------------------------------------------------------------- 版本与文档核对
+
+def theme_version_range(root: Path, theme: str) -> tuple[str | None, str | None]:
+    """读主题声明的 Hugo 版本区间。
+
+    区间写在主题**根目录的 config.toml** 里，不在 theme.toml ——
+    上游 Blowfish 的该文件只有 [module.hugoVersion] 这一段。
+    """
+    path = root / "themes" / theme / "config.toml"
+    if not path.is_file():
+        return None, None
+    try:
+        data = tomllib.loads(path.read_text(encoding="utf-8"))
+    except tomllib.TOMLDecodeError as e:
+        err(f"themes/{theme}/config.toml 不是合法的 TOML：{e}")
+        return None, None
+    ver = data.get("module", {}).get("hugoVersion", {})
+    return ver.get("min"), ver.get("max")
+
+
+def pinned_hugo_version(root: Path) -> str | None:
+    """工作流里钉住的 Hugo 版本 —— 版本号的唯一来源。"""
+    path = root / ".github" / "workflows" / "hugo.yml"
+    if not path.is_file():
+        return None
+    m = re.search(r"^\s*HUGO_VERSION:\s*(\S+)\s*$",
+                  path.read_text(encoding="utf-8"), re.M)
+    return m.group(1) if m else None
+
+
+def as_version(text: str) -> tuple[int, ...] | None:
+    """把 "1.2.3" 变成 (1, 2, 3) 以便比较大小。"""
+    m = re.fullmatch(r"(\d+(?:\.\d+)*)", text.strip())
+    return tuple(int(x) for x in m.group(1).split(".")) if m else None
+
+
+def check_hugo_version(root: Path, cfg: dict) -> None:
+    """工作流钉住的 Hugo 版本必须落在主题声明的区间内。
+
+    Hugo 自己读到越界只发一条 WARN，退出码仍是 0、产物照常生成，
+    线上会带着不兼容的版本继续跑 —— 这件事只能在这里拦。
+    """
+    theme = cfg.get("theme", "")
+    if not theme or not (root / "themes" / theme).is_dir():
+        return
+
+    low, high = theme_version_range(root, theme)
+    if low is None and high is None:
+        warn(f"themes/{theme}/config.toml 没有声明 Hugo 版本区间，"
+             f"升级 Hugo 时没有依据可比对")
+        return
+
+    pinned = pinned_hugo_version(root)
+    if pinned is None:
+        warn("在 .github/workflows/hugo.yml 里找不到 HUGO_VERSION，跳过版本核对")
+        return
+    current = as_version(pinned)
+    if current is None:
+        warn(f"HUGO_VERSION 不像版本号：{pinned}")
+        return
+
+    def out_of_range(label: str, bound: str) -> None:
+        err(f"Hugo 版本 {pinned} {label} {bound} —— 区间由主题在 "
+            f"themes/{theme}/config.toml 里声明。Hugo 对此只发警告、不会让构建"
+            f"失败，所以改 HUGO_VERSION 之前要先确认新版本真的能用")
+
+    low_ver = as_version(low) if low else None
+    high_ver = as_version(high) if high else None
+    if low_ver and current < low_ver:
+        out_of_range("低于下限", low)
+    elif high_ver and current > high_ver:
+        out_of_range("高于上限", high)
+
+
+def check_workflow_runs_this_checker(root: Path) -> None:
+    """「本地和 CI 跑同一个脚本」这句话必须成立。"""
+    path = root / ".github" / "workflows" / "hugo.yml"
+    if not path.is_file():
+        return
+    # 只看非注释行：文件头的说明里也提到过这个脚本名，不能拿它充数
+    body = "\n".join(
+        line for line in path.read_text(encoding="utf-8").splitlines()
+        if not line.lstrip().startswith("#")
+    )
+    if "tools/check.py" not in body:
+        err(".github/workflows/hugo.yml 没有调用 tools/check.py —— "
+            "本地和 CI 的规则会各走各的")
 
 
 def check_author_links(root: Path, cfg: dict) -> None:
@@ -307,9 +398,11 @@ def main() -> int:
     if cfg:
         check_author_links(root, cfg)
         check_menu(cfg)
+        check_hugo_version(root, cfg)
     check_content(root)
     check_icons(root)
     check_tracked_artifacts(root)
+    check_workflow_runs_this_checker(root)
 
     for m in ERRORS:
         print(f"  [错误] {m}")

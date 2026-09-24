@@ -2,13 +2,13 @@
 title: "你好，世界：这个博客是怎么搭起来的"
 date: 2026-09-18
 draft: false
-summary: "第一篇正式文章。顺便把博客的技术选型和日常写作流程一次说清楚。"
+summary: "第一篇正式文章。交代一下这个博客的技术选型，以及它为什么长这样。"
 tags: ["Hugo", "GitHub Pages"]
 categories: ["建站笔记"]
 showTableOfContents: true
 ---
 
-这是博客的第一篇文章。与其写「Hello World」，不如直接把这套博客的技术底细交代清楚——以后回头看也方便。
+这是博客的第一篇文章。与其写「Hello World」，不如先把这套博客的技术底细交代清楚——以后回头看也方便。
 
 ## 技术选型
 
@@ -18,23 +18,6 @@ showTableOfContents: true
 | 主题 | Blowfish | 基于 Tailwind CSS，默认就好看，而且留了自定义样式的入口 |
 | 托管 | GitHub Pages | 免费、无广告、支持 HTTPS 和自定义域名 |
 | 版本管理 | Git | 每篇文章都有历史记录，改坏了随时回滚 |
-
-## 内容放在哪
-
-文章全部放在 `content/posts/` 目录下，一篇 Markdown 文件就是一篇文章。文件名会变成网址的一部分，所以建议用英文加短横线，例如：
-
-```
-content/posts/hello-world.md   →   /posts/hello-world/
-```
-
-## 日常写作流程
-
-1. 新建一个 Markdown 文件，写好标题和正文；
-2. 本地预览确认排版没问题；
-3. 提交并推送到 GitHub；
-4. GitHub Actions 自动构建，一两分钟后线上就能看到。
-
-就这四步。剩下的事情——生成 HTML、压缩资源、部署到服务器——全部由工具链自动完成。
 
 ## 为什么要用静态站点
 

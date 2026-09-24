@@ -36,8 +36,9 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  # 必须和主题要求的版本范围一致（Blowfish 3.6.0 支持 0.162–0.165）
-  # 改这里之前先看 themes/blowfish/theme.toml 里的 hugoVersion
+  # 构建站点用的 Hugo 版本，这里是版本号的唯一来源（别处不再重复写）。
+  # 允许的上限由主题声明：themes/blowfish/config.toml 的 [module.hugoVersion]。
+  # 越界时 Hugo 只发一条 WARN、构建照样成功，所以由 tools/check.py 来拦。
   HUGO_VERSION: 0.165.0
 
 jobs:

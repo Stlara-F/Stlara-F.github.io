@@ -6,7 +6,7 @@
 # ---------- 基础 ----------
 theme = "blowfish"
 
-# 【上线前必改】换成你的网址，注意结尾的斜杠不能少
+# 站点网址。结尾的斜杠不能少，canonical 和 RSS 都按它拼。
 baseURL = "https://stlara-f.github.io/"
 
 # 站点标题：显示在浏览器标签页和页头
@@ -45,7 +45,7 @@ buildFuture = false
   series = "series"
 
 # ---------- 输出格式 ----------
-# home 里的 JSON 是站内搜索用的，别删
+# home 里的 JSON 是站内搜索的数据源（enableSearch 依赖它）
 [outputs]
   home = ["HTML", "RSS", "JSON"]
 
@@ -57,12 +57,14 @@ buildFuture = false
 
 # ============================================================
 #  正文解析（Markdown 渲染）
-#  这一段是主题要求必须配的，删了会导致代码高亮、表格、公式出问题
+#  表格和代码高亮是 Hugo 默认就有的。下面几项是在默认之上额外要的行为，
+#  删掉会退回默认：独立成段的图片被包进 <p>、正文里的 HTML 被转义、
+#  \( \) 和 $$ $$ 里的公式不再解析。
 # ============================================================
 [markup]
   [markup.goldmark]
     [markup.goldmark.parser]
-      # 图片单独成段时，不要包进 <p> 里
+      # 图片单独成段时不包进 <p>（false = 不包）
       wrapStandAloneImageWithinParagraph = false
       # 允许在 Markdown 里给块级元素加 {#id .class} 属性
       [markup.goldmark.parser.attribute]
@@ -81,8 +83,8 @@ buildFuture = false
           inline = [['\(', '\)']]
 
   [markup.highlight]
-    # 必须为 false。改成 true 会把配色写死进 HTML，
-    # 导致深色模式下正常的代码，在浅色模式下变成浅底浅字看不清。
+    # Hugo 默认是 true：把配色直接写死进 HTML。改成 false 才会按 class 引用
+    # 主题的高亮样式，明暗两套配色才能各自成立。
     noClasses = false
 
   [markup.tableOfContents]
@@ -118,7 +120,7 @@ buildFuture = false
   # 目录跟随滚动高亮
   smartTOC = true
 
-  # 静态资源指纹算法，别乱改
+  # 静态资源指纹算法（Hugo 默认 sha256）
   fingerprintAlgorithm = "sha512"
 
   # 日期显示格式。不设的话会退回英文的 "September 18, 2026"
@@ -134,7 +136,7 @@ buildFuture = false
   [params.footer]
     showMenu = true
     showCopyright = true
-    # 保留主题署名，这是使用免费主题的礼貌，建议别关
+    # 页脚显示主题署名（Blowfish 作者）
     showThemeAttribution = true
     showAppearanceSwitcher = true
     showScrollToTop = true
@@ -203,16 +205,8 @@ buildFuture = false
     image = "img/avatar.svg"
     headline = "在这里写一句话介绍自己"
     bio = "这里可以写两三句更详细的自我介绍，会显示在文章底部的作者卡片里。"
-    # 社交链接。取消注释下面这块（含结尾的 ] ）并改成你的地址。
-    # 两个容易踩的点：
-    #   1) 同时要把再下面那行「links = []」删掉，同一个键写两遍会让 Hugo 直接报错
-    #   2) email 只填邮箱本身，不要带 "mailto:" 前缀（主题会自动加）
-    # 等号左边的名字就是图标名，取值见 themes/blowfish/assets/icons/ 下的文件名
-    # links = [
-    #   { github = "https://github.com/你的用户名" },
-    #   { x-twitter = "https://x.com/你的用户名" },
-    #   { email = "你的邮箱" },
-    # ]
+    # 社交链接。写法见 README 的「改社交链接」一节，把下面这行整行替换掉。
+    # 等号左边的名字就是图标名，取值见 themes/blowfish/assets/icons/ 下的文件名。
     links = []
 
 # ============================================================

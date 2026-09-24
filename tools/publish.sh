@@ -54,7 +54,7 @@ echo "当前分支：$BRANCH"
 
 if [ "$BRANCH" != "main" ]; then
     echo
-    echo "注意：你现在不在 main 分支上。"
+    echo "你现在不在 main 分支上。"
     echo "只有 main 分支的内容会发布到线上，推别的分支不会更新站点。"
     read -r -p "仍然继续？(y/N) " ans
     [ "$ans" = "y" ] || { echo "已取消"; exit 0; }
