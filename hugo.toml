@@ -95,6 +95,9 @@ buildFuture = false
 #  主题参数：外观与功能
 # ============================================================
 [params]
+  # 站点简介。用在首页的 <meta name="description">，也是没写 summary 的页面的兜底。
+  description = "这里记录我在技术、阅读和生活里的一些想法。"
+
   # 配色方案。可选值：
   # autumn / avocado / bloody / blowfish / burufugu / congo / fire / forest
   # github / marvel / neon / noir / ocean / one-light / princess / slate / terminal

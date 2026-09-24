@@ -192,6 +192,7 @@ github  marvel   neon    noir      ocean     one-light  princess  slate  termina
 
 `hugo.toml` 的 `[params]` 下面每一行都带注释，改的时候就在旁边。最常动的几个：
 
+- `[params] description` — 站点简介，用在首页的搜索引擎摘要和分享卡片上
 - `defaultAppearance` — 默认明色还是暗色
 - `[params.homepage] layout` — 首页样式：`page`（博客列表）/ `profile`（个人名片）/ `hero` / `card` / `background`
 - `[params.article] showTableOfContents` — 是否显示文章目录
