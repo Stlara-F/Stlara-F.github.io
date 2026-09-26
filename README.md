@@ -35,28 +35,28 @@ blog/
 
 ---
 
-## 个性化清单（把占位符换成你自己的）
+## 站点身份（想改哪里都在这）
 
-下面这几处现在还是占位内容，**改完提交推送就会自动生效**。大多集中在 `hugo.toml`：
+站点标题、作者信息和社交链接已经填好，集中在 `hugo.toml`。想改任何一项，对号入座：
 
 | 想改什么 | 位置（在 `hugo.toml` 里搜） | 现在是什么 |
 | --- | --- | --- |
-| 站点标题（浏览器标签页 + 页头） | `title =` | `我的博客` |
-| 页脚署名 + 文章底部作者卡片 | `[params.author]` → `name =` | `你的名字` |
-| 作者卡片里的一句话 | `[params.author]` → `headline =` | `在这里写一句话介绍自己` |
-| 作者卡片里的详细介绍 | `[params.author]` → `bio =` | `这里可以写两三句更详细的自我介绍…` |
+| 站点标题（浏览器标签页 + 页头） | `title =` | `Stlara 的博客` |
+| 页脚署名 + 文章底部作者卡片 | `[params.author]` → `name =` | `Stlara-F` |
+| 作者卡片里的一句话 | `[params.author]` → `headline =` | `把想明白的东西写下来。` |
+| 作者卡片里的详细介绍 | `[params.author]` → `bio =` | `在这里记录学习笔记、技术总结和一些零散的想法。` |
 | 作者头像 | `[params.author]` → `image =` | `img/avatar.svg`（文件在 `assets/img/` 下） |
-| 社交链接 | `[params.author]` → `links` | 空数组，写法见下一节 |
-| 关于页正文 | `content/about.md` | 示例内容 |
-| 首页顶部那段话 | `content/_index.md` | 示例内容。它不设 `title`——设了正文上方会多出一个大标题 |
+| 社交链接 | `[params.author]` → `links` | GitHub 链接，加法见下一节 |
+| 关于页正文 | `content/about.md` | 已填写 |
+| 首页顶部那段话 | `content/_index.md` | 已填写。它不设 `title`——设了正文上方会多出一个大标题 |
 
 ### 改社交链接
 
-`hugo.toml` 里现在只有一行 `links = []`。把这行**整行替换**成下面这样：
+现在配置里已有一个 GitHub 链接。要加更多（比如 X、Telegram），往 `links` 数组里按同样格式追加：
 
 ```toml
   links = [
-    { github = "https://github.com/你的用户名" },
+    { github = "https://github.com/Stlara-F" },
     { x-twitter = "https://x.com/你的用户名" },
     { email = "你的邮箱" },
   ]

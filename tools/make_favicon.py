@@ -122,7 +122,7 @@ def main() -> int:
     parser.add_argument("--from", dest="c_from", default="#60a5fa")
     parser.add_argument("--to", dest="c_to", default="#2563eb")
     parser.add_argument("--theme-color", default="#2563eb")
-    parser.add_argument("--name", default="我的博客")
+    parser.add_argument("--name", default="Stlara 的博客")
     args = parser.parse_args()
 
     site = find_site_root(Path(__file__).resolve().parent)

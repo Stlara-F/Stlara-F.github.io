@@ -7,7 +7,7 @@ showTableOfContents: false
 
 ## 关于我
 
-我是 **你的名字**，这里写两三句自我介绍：目前在做什么、关注什么方向、平时喜欢什么。
+我是 **Stlara-F**。
 
 ## 关于这个博客
 
@@ -15,8 +15,7 @@ showTableOfContents: false
 
 ## 联系方式
 
-- 邮箱：`you@example.com`
-- GitHub：`https://github.com/你的用户名`
+- GitHub：https://github.com/Stlara-F
 
 ## 关于本站
 
