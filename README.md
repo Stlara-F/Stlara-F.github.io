@@ -19,7 +19,7 @@ blog/
 │   └── img/avatar.svg     头像
 ├── static/                原样复制到网站根目录的文件（站点图标在这里）
 ├── archetypes/default.md  新建文章时套用的模板
-├── layouts/               覆盖主题模板用（现在是空的）
+├── layouts/               覆盖主题模板用（空目录，git 不跟踪）
 ├── themes/blowfish/       主题本体（一般不用动）
 ├── tools/                 检查、发布、生成图标的小脚本
 ├── public/                构建产物，自动生成，不用管也不用提交

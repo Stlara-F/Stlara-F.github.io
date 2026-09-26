@@ -233,9 +233,6 @@ def check_author_links(root: Path, cfg: dict) -> None:
                         f"现在是：{url}")
                 elif "@" not in url:
                     err(f"社交链接的 email 看着不像邮箱地址：{url}")
-                elif re.fullmatch(r"[A-Za-z0-9+/=]{16,}", url):
-                    err(f"社交链接的 email 填的是 base64 串 —— 主题会再编一次，"
-                        f"直接填邮箱明文即可：{url}")
 
 
 def check_menu(cfg: dict) -> None:

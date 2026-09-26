@@ -10,5 +10,9 @@ Thumbs.db
 .vscode/
 *.swp
 
-# 本地工作笔记（含本机路径等信息，不发布）
-.workbuddy-ai/
+# 本地工作笔记与 agent 状态（含本机路径等信息，不发布）
+.workbuddy-ai
+.zcode
+.zcodeignore
+.mimosa
+.task
