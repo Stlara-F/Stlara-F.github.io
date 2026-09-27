@@ -265,7 +265,8 @@ git push
 | 配置 | `hugo.toml` 是不是合法 TOML（顺带抓「同一个键写两遍」）、`baseURL` 是不是还写着 example.com、`timeZone` 在不在、主题目录完不完整 |
 | 版本 | 工作流钉住的 Hugo 版本有没有越出主题声明的区间 |
 | 社交链接 | 图标名在主题里有没有对应文件、email 有没有误写 `mailto:` 前缀 |
-| 菜单 | 每一项有没有 name 和 url |
+| 菜单 | 每一项有没有 url 或 pageRef（**不写 name** —— 菜单文字由页面自己的 title 提供，见上面「写另一种语言的版本」） |
+| 语言 | 语言代码的大小写分工对不对（`locale` 规范大小写、`[languages.<键名>]` 小写）、默认语言的内容文件有没有误加语言后缀 |
 | 内容 | front matter 的 title / date 在不在、draft 是不是 true/false |
 | 图标 | `site.webmanifest` 引用的文件存不存在 |
 | 仓库 | 构建产物（public/）有没有被误提交 |
@@ -277,6 +278,17 @@ git push
 ```bash
 python tools/check.py    # 有问题退出码 1
 ```
+
+`check.py` 只看配置和源文件，**不构建**。另有一个看构建产物的检查：
+
+```bash
+hugo --gc --minify --printPathWarnings   # 先构建
+python tools/verify_i18n.py              # 再验产物：29 项
+```
+
+它盯的是多语言上线后最容易出事的两件事：**中文网址有没有被加上语言前缀**
+（站点已上线，`/posts/...` 一旦搬家旧链接就全断），以及**每种语言的站点里有没有悬空链接**
+（某个菜单项指向了该语言下并不存在的页面）。
 
 ### 线上做了哪些检查
 

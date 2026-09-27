@@ -127,8 +127,8 @@ buildFuture = false
   # 静态资源指纹算法（Hugo 默认 sha256）
   fingerprintAlgorithm = "sha512"
 
-  # 日期显示格式。不设的话会退回英文的 "September 18, 2026"
-  dateFormat = "2006年1月2日"
+  # 日期显示格式是**分语言**的，写在下面的 [languages.<语言>.params] 里 ——
+  # 主题读的是 site.Language.Params.dateFormat，写在顶层会被所有语言继承。
 
   # ---------- 页头 ----------
   [params.header]
@@ -248,15 +248,18 @@ buildFuture = false
 # ============================================================
 [languages]
   [languages.zh-cn]
-    # locale 决定 <html lang>、hreflang，以及用主题的哪个翻译文件
-    # （主题自带 i18n/zh-CN.yaml）。它和上面 defaultContentLanguage 的
-    # "zh-cn" 大小写不同，两边都不要改。
+    # locale 决定 <html lang> 与 hreflang 里写的语言代码。它和上面
+    # defaultContentLanguage 的 "zh-cn" 大小写不同：键名小写、locale 规范
+    # 大小写，两边都不要改（写混了不报错，只是输出悄悄变样）。
     locale = "zh-CN"
     title = "Stlara 的博客"
     weight = 1
     [languages.zh-cn.params]
       displayName = "简体中文"
       description = "这里记录我在技术、阅读和生活里的一些想法。"
+      # 主题读的是 site.Language.Params.dateFormat，所以每个语言各写一份。
+      # 漏写会退回主题默认的 :date_long（英文格式）。
+      dateFormat = "2006年1月2日"
       [languages.zh-cn.params.author]
         headline = "把想明白的东西写下来。"
         bio = "在这里记录学习笔记、技术总结和一些零散的想法。"
@@ -268,6 +271,7 @@ buildFuture = false
     [languages.en.params]
       displayName = "English"
       description = "Notes on technology, reading, and everyday thoughts."
+      dateFormat = "January 2, 2006"
       [languages.en.params.author]
         headline = "Writing down what I have figured out."
         bio = "Study notes, technical write-ups, and scattered thoughts."

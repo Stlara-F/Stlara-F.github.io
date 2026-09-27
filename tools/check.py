@@ -118,6 +118,62 @@ def check_config(root: Path) -> dict | None:
     return cfg
 
 
+# ---------------------------------------------------------------- 语言检查
+
+def canonical_locale(locale: str) -> str:
+    """按 BCP 47 的大小写规范重写：语言小写、两位地区大写、四位文字标题式。"""
+    parts = locale.split("-")
+    out = [parts[0].lower()]
+    for p in parts[1:]:
+        out.append(p.upper() if len(p) == 2 else p.title() if len(p) == 4 else p)
+    return "-".join(out)
+
+
+def check_languages(cfg: dict) -> None:
+    """语言代码的大小写分工：locale 用规范大小写，[languages.<键名>] 用小写。
+
+    写混了不会报错，只是输出悄悄变样：locale 写成 zh-cn，`<html lang>` 与
+    `hreflang` 就跟着变小写；键名写成 zh-CN，中文页面会被搬到 /zh-CN/ 下。
+    """
+    langs = cfg.get("languages")
+    if not isinstance(langs, dict):
+        return
+    for key, block in langs.items():
+        if key != key.lower():
+            warn(f"[languages.{key}] 的键名用了大写。它决定 URL 前缀，"
+                 f"应该写成 [languages.{key.lower()}]")
+        if not isinstance(block, dict):
+            continue
+        locale = block.get("locale")
+        if isinstance(locale, str) and locale and locale != canonical_locale(locale):
+            warn(f"[languages.{key}] 的 locale 写成了 {locale}，规范写法是 "
+                 f"{canonical_locale(locale)}（它决定 <html lang> 与 hreflang）")
+
+
+def check_default_language_suffix(root: Path, cfg: dict) -> None:
+    """默认语言的内容文件不该带语言后缀。
+
+    带后缀的默认语言文件不会变成「另一个版本」：它和同名的不带后缀文件指向
+    同一个页面，且带后缀的会顶掉不带后缀的，Hugo 不会有任何提示。
+    """
+    default = cfg.get("defaultContentLanguage")
+    content_dir = root / "content"
+    if not default or not content_dir.is_dir():
+        return
+    for md in sorted(content_dir.rglob("*.md")):
+        m = re.search(r"\.([A-Za-z]{2}(?:-[A-Za-z]{2})?)\.md$", md.name)
+        if not m or m.group(1).lower() != str(default).lower():
+            continue
+        rel = md.relative_to(root).as_posix()
+        plain = md.name[:m.start()] + ".md"
+        if (md.parent / plain).is_file():
+            err(f"{rel}：默认语言（{default}）的内容不加语言后缀，删掉它 —— "
+                f"它会顶掉 {plain} 生成的页面，Hugo 不会有任何提示")
+        else:
+            warn(f"{rel}：默认语言（{default}）的内容不加语言后缀，应该叫 "
+                 f"{(md.parent / plain).relative_to(root).as_posix()}")
+
+
 # ---------------------------------------------------------------- 版本与文档核对
 
 def theme_version_range(root: Path, theme: str) -> tuple[str | None, str | None]:
@@ -264,6 +320,10 @@ def check_menu(cfg: dict) -> None:
             if not item.get("url") and not item.get("pageRef"):
                 err(f"[[menu.{section}]] 第 {i} 项（{item.get('name', '?')}）"
                     f"既没有 url 也没有 pageRef，点了没反应")
+            # 外链菜单项没有 pageRef，只能写 name；两者都有则是把 title 顶掉了
+            if item.get("name") and item.get("pageRef"):
+                warn(f"[[menu.{section}]] 第 {i} 项同时写了 name 和 pageRef。"
+                     f"菜单文字由页面 title 提供，写死 name 会让每种语言都要重写一份菜单")
 
 
 # ---------------------------------------------------------------- 内容检查
@@ -418,6 +478,8 @@ def main() -> int:
         check_author_links(root, cfg)
         check_menu(cfg)
         check_hugo_version(root, cfg)
+        check_languages(cfg)
+        check_default_language_suffix(root, cfg)
     check_content(root)
     check_icons(root)
     check_tracked_artifacts(root)
