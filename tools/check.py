@@ -432,13 +432,17 @@ def check_content(root: Path) -> None:
             warn(f"{rel}：正文是空的")
 
 
-def check_bilingual(root: Path) -> None:
-    """开了双语对照的内容，得真有另一种语言版本可以对照。
+def check_bilingual(root: Path, cfg: dict | None) -> None:
+    """双语对照的两处静默失败：开关空转、CSS 的配对组数不够。
 
-    `bilingual: true` 只在同 basename 存在另一个语言文件时才有意义 ——
-    Hugo 的 `.Translations` 那时才非空。只有一份文件时开关是空转：
-    页面上不会出现对照控件，而且构建不报任何错。这是典型的静默失败。
+    两处都不报错：`bilingual: true` 只在同 basename 存在另一个语言文件时才有意义，
+    只有一份文件时页面上不会出现对照控件；配对规则少一组时那一档选项点了没反应。
     """
+    _check_bilingual_switch(root)
+    _check_pane_rules(root, cfg)
+
+
+def _check_bilingual_switch(root: Path) -> None:
     content_dir = root / "content"
     if not content_dir.is_dir():
         return
@@ -457,6 +461,44 @@ def check_bilingual(root: Path) -> None:
             rel = md.relative_to(root).as_posix()
             warn(f"{rel}：开了双语对照，但 {Path(key).name} 只有这一份语言版本，"
                  f"页面上不会出现对照控件（这个开关是空转的）")
+
+
+# 显示规则按「第 N 个选项 ↔ 第 N 个 pane」手写在 custom.css 里，组数就是
+# 「一篇文章能同页对照的语言版本数」上限。这里从 CSS 里数出组数，不另存一份常量。
+PANE_RULE = re.compile(
+    r"\.bi-radio:nth-of-type\((\d+)\):checked\s*~\s*"
+    r"\.bi-grid\s*>\s*\.bi-pane:nth-child\((\d+)\)"
+)
+TAB_RULE = re.compile(
+    r"\.bi-radio:nth-of-type\((\d+)\):checked\s*~\s*"
+    r"\.bi-controls\s*>\s*\.bi-tab:nth-child\((\d+)\)"
+)
+
+
+def _check_pane_rules(root: Path, cfg: dict | None) -> None:
+    css_path = root / "assets/css/custom.css"
+    langs = (cfg or {}).get("languages")
+    if not css_path.is_file() or not isinstance(langs, dict):
+        return
+
+    css = css_path.read_text(encoding="utf-8")
+    caps: list[int] = []
+    for label, pattern in (("显示", PANE_RULE), ("高亮", TAB_RULE)):
+        idx = sorted({int(a) for a, b in pattern.findall(css) if a == b})
+        if not idx:
+            warn(f"assets/css/custom.css 里找不到双语对照的{label}配对规则，"
+                 f"对照切换会失效")
+            continue
+        missing = sorted(set(range(1, idx[-1] + 1)) - set(idx))
+        if missing:
+            warn(f"assets/css/custom.css 的{label}配对规则缺第 "
+                 f"{'、'.join(map(str, missing))} 组——那几档选项点了没反应")
+        caps.append(idx[-1])
+
+    if caps and len(langs) > min(caps):
+        warn(f"站点配了 {len(langs)} 种语言，但 assets/css/custom.css 只写了 "
+             f"{min(caps)} 组配对规则——一篇文章若有更多语言版本，"
+             f"多出来的选项点了没反应。照最后一行的编号往下加组即可")
 
 
 # ---------------------------------------------------------------- 卫生检查
@@ -522,7 +564,7 @@ def main() -> int:
         check_languages(cfg)
         check_default_language_suffix(root, cfg)
     check_content(root)
-    check_bilingual(root)
+    check_bilingual(root, cfg)
     check_icons(root)
     check_tracked_artifacts(root)
     check_workflow_runs_this_checker(root)

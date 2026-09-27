@@ -1,40 +1,41 @@
-{{/* 文章正文：开了对照开关且存在其他语言版本时，输出「单栏 / 对照」切换；否则原样输出正文。
+{{- /* 文章正文：开了对照开关且存在其他语言版本时，输出「单栏 / 对照」切换；否则原样输出正文。
 
-     判空分支必须原样输出 {{ .Content }}、不包任何容器，未开开关的文章产物才与改动前一致。
+     两个分支的空白都由 trim 标记吃掉：未开开关时输出必须与主题原本的 {{ .Content }}
+     逐字节相同——对照页是少数，绝大多数文章的产物不该被这个改动碰到。
 
-     radio 与 pane 靠**顺序**对应：第 N 个 radio 选中时显示第 N 个 pane，
-     custom.css 为前 8 组写了规则，因此最多支持 8 种语言版本同页。 */}}
-{{ $others := .Translations }}
-{{ if and .Params.bilingual (gt (len $others) 0) }}
-  {{ $primary := .Language.Lang }}
-  <div class="bi">
-    <input type="radio" name="bi-view" id="bi-view-{{ $primary }}" class="bi-radio" checked>
-    {{ range $others }}
-      <input type="radio" name="bi-view" id="bi-view-{{ .Language.Lang }}" class="bi-radio">
-    {{ end }}
+     radio 与 pane 靠**顺序**对应：第 N 个 radio 选中时显示第 N 个 pane。
+     配对组数（= 能同页对照的语言版本数上限）在 custom.css，由 tools/check.py 核对。 */ -}}
+{{- $others := .Translations -}}
+{{- if and .Params.bilingual (gt (len $others) 0) -}}
+{{- $primary := .Language.Lang -}}
+<div class="bi">
+  <input type="radio" name="bi-view" id="bi-view-{{ $primary }}" class="bi-radio" checked>
+  {{- range $others }}
+  <input type="radio" name="bi-view" id="bi-view-{{ .Language.Lang }}" class="bi-radio">
+  {{- end }}
 
-    <div class="bi-controls">
-      <label for="bi-view-{{ $primary }}" class="bi-tab is-primary">
-        {{ .Language.Params.displayName | default $primary | emojify }}
-      </label>
-      {{ range $others }}
-        <label for="bi-view-{{ .Language.Lang }}" class="bi-tab">
-          {{ .Language.Params.displayName | default .Language.Lang | emojify }}
-        </label>
-      {{ end }}
-    </div>
-
-    <div class="bi-grid">
-      <div class="bi-pane is-primary" data-lang="{{ $primary }}" lang="{{ .Language.Locale }}">
-        {{ .Content }}
-      </div>
-      {{ range $others }}
-        <div class="bi-pane" data-lang="{{ .Language.Lang }}" lang="{{ .Language.Locale }}">
-          {{ .Content }}
-        </div>
-      {{ end }}
-    </div>
+  <div class="bi-controls">
+    <label for="bi-view-{{ $primary }}" class="bi-tab is-primary">
+      {{- .Language.Params.displayName | default $primary | emojify -}}
+    </label>
+    {{- range $others }}
+    <label for="bi-view-{{ .Language.Lang }}" class="bi-tab">
+      {{- .Language.Params.displayName | default .Language.Lang | emojify -}}
+    </label>
+    {{- end }}
   </div>
-{{ else }}
-  {{ .Content }}
-{{ end }}
+
+  <div class="bi-grid">
+    <div class="bi-pane is-primary" data-lang="{{ $primary }}" lang="{{ .Language.Locale }}">
+      {{- .Content -}}
+    </div>
+    {{- range $others }}
+    <div class="bi-pane" data-lang="{{ .Language.Lang }}" lang="{{ .Language.Locale }}">
+      {{- .Content -}}
+    </div>
+    {{- end }}
+  </div>
+</div>
+{{- else -}}
+{{ .Content }}
+{{- end -}}

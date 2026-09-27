@@ -151,6 +151,7 @@ categories: ["分类名"]
 | `draft` | `true` 是草稿（线上不显示），`false` 才正式发布 |
 | `summary` | 摘要，留空则自动截取正文开头 |
 | `tags` / `categories` | 标签和分类，会自动生成对应的归档页 |
+| `bilingual` | 可选。写了 `true` 就会在页面上出现双语对照按钮，见下面「对照阅读两种语言」 |
 
 正文语法看这篇就够了：[Markdown 写作速查表](content/posts/markdown-cheatsheet.md)。
 
@@ -169,24 +170,51 @@ categories: ["分类名"]
 
 ### 写另一种语言的版本
 
-站点配了两种语言：中文（默认）和英文。中文文章的网址还是 `/posts/...`，
-英文的多一层 `/en/`。
+站点配了 10 种语言。中文是默认语言，另外还有英、俄、法、德、意、日、葡、韩、世界语
+（完整清单在 `hugo.toml` 的 `[languages]`）。中文文章的网址还是 `/posts/...`，
+其他语言多一层语言前缀，比如英文是 `/en/posts/...`、日文是 `/ja/posts/...`。
 
-同一篇文章的两种语言版本靠**文件名后缀**配对：
+同一篇文章的各语言版本靠**文件名后缀**配对：
 
-| 中文（默认语言，不加后缀） | 英文 |
-| --- | --- |
-| `content/posts/my-first-note.md` | `content/posts/my-first-note.en.md` |
-| `content/posts/my-first-note/index.md` | `content/posts/my-first-note/index.en.md` |
+| 中文（默认语言，不加后缀） | 英文 | 日文 |
+| --- | --- | --- |
+| `content/posts/my-first-note.md` | `my-first-note.en.md` | `my-first-note.ja.md` |
+| `content/posts/my-first-note/index.md` | `index.en.md` | `index.ja.md` |
 
 两条要记住的规则：
 
 - **默认语言不加后缀。** 写成 `my-first-note.zh-cn.md` 反而不会被当成中文版。
-- **没有英文版的内容，不会出现在英文站点里。** 英文的 `Posts` / `About` 页只列有英文版的
-  内容，所以不会出现点进去打不开的链接；反过来也一样。
+- **没有哪门语言版本的内容，就不会出现在那门语言的站点里。** 英文的 `Posts` / `About` 页
+  只列有英文版的内容，所以不会出现点进去打不开的链接；其他语言同理。
 
-要加第三种语言，在 `hugo.toml` 的 `[languages]` 里加一块，内容文件按同样的后缀命名即可。
+要再加一种语言，在 `hugo.toml` 的 `[languages]` 里加一块，内容文件按同样的后缀命名即可。
 语言代码的大小写有讲究（`zh-CN` 和 `zh-cn` 分工不同），完整规则见 [docs/i18n.md](docs/i18n.md)。
+
+### 对照阅读两种语言
+
+一篇文章只要有多于一种语言版本，在 front matter 里加一行 `bilingual: true`，
+页面正文上方就会出现一排按钮，点一下就把两种语言并排显示：
+
+```yaml
+---
+title: "我的第一篇笔记"
+date: 2026-09-27
+bilingual: true
+---
+```
+
+- **默认是单栏。** 只有点了「⇄」才并排；不写这一行就完全没有按钮，和以前一模一样。
+- **按钮怎么点。** 按钮上写的是各语言自己的叫法（简体中文 / English / 日本語 …），
+  取自 `hugo.toml` 里那门语言的 `displayName`。第一个按钮是「只看本页语言」，
+  其余每个按钮对应一门语言，点哪个就和哪个并排。键盘 Tab 能选中。
+- **显示成什么样。** 左栏是本页语言、右栏是选中的那门语言；窗口窄于 1024px 时
+  自动改成上下排列；明暗配色跟随站点主题。
+- **支持范围。** 任意两门语言都能配（中英、中俄、中日……），一篇文章有几门语言版本
+  就有几个按钮。并排的两栏各自独立、不做逐段对齐。
+- **对照状态不进网址。** 把地址发给别人，对方打开看到的是单栏。
+
+两件事要知道：同一篇文章的两份正文出现在同一个页面里，标题的锚点链接只对左栏可靠；
+开了对照的文章，网页体积会增加「语言版本数 − 1」份正文。
 
 ---
 
@@ -268,6 +296,7 @@ git push
 | 菜单 | 每一项有没有 url 或 pageRef（**不写 name** —— 菜单文字由页面自己的 title 提供，见上面「写另一种语言的版本」） |
 | 语言 | `defaultContentLanguage` 与某个 `[languages.<键名>]` 逐字相同、`locale` 规范大小写、键名全小写、默认语言的内容文件有没有误加语言后缀 |
 | 内容 | front matter 的 title / date 在不在、draft 是不是 true/false |
+| 双语对照 | 开了 `bilingual` 却没有别的语言版本（按钮不会出现，构建也不报错）、CSS 里的对照配对组数够不够站点语言数 |
 | 图标 | `site.webmanifest` 引用的文件存不存在 |
 | 仓库 | 构建产物（public/）有没有被误提交 |
 
@@ -283,7 +312,7 @@ python tools/check.py    # 有问题退出码 1
 
 ```bash
 hugo --gc --minify --printPathWarnings   # 先构建
-python tools/verify_i18n.py              # 再验产物：29 项
+python tools/verify_i18n.py              # 再验产物（项数随语言数增长）
 ```
 
 它盯的是多语言上线后最容易出事的两件事：**中文网址有没有被加上语言前缀**

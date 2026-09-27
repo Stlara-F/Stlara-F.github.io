@@ -98,8 +98,10 @@ article img {
    front matter 的 bilingual: true 决定。切换全在 CSS：单选按钮的选中
    状态经兄弟选择器决定显示哪一栏，没有 JavaScript。
 
-   规则按「第 N 个选项 ↔ 第 N 个 pane」配对，写了 8 组，
-   所以一篇文章最多支持 8 种语言版本同页对照。
+   规则按「第 N 个选项 ↔ 第 N 个 pane」配对，组数就是「一篇文章能同页对照的
+   语言版本数」上限，当前 10（等于 hugo.toml 里配的语言数）。加语言时要同步
+   加组——漏了不会报错，只会让最后几种语言的选项点了没反应；
+   tools/check.py 会拿这里的组数核对语言数。
    ============================================================ */
 
 .bi {
@@ -176,7 +178,9 @@ article img {
 .bi-radio:nth-of-type(5):checked ~ .bi-grid > .bi-pane:nth-child(5),
 .bi-radio:nth-of-type(6):checked ~ .bi-grid > .bi-pane:nth-child(6),
 .bi-radio:nth-of-type(7):checked ~ .bi-grid > .bi-pane:nth-child(7),
-.bi-radio:nth-of-type(8):checked ~ .bi-grid > .bi-pane:nth-child(8) {
+.bi-radio:nth-of-type(8):checked ~ .bi-grid > .bi-pane:nth-child(8),
+.bi-radio:nth-of-type(9):checked ~ .bi-grid > .bi-pane:nth-child(9),
+.bi-radio:nth-of-type(10):checked ~ .bi-grid > .bi-pane:nth-child(10) {
   display: block;
 }
 
@@ -188,7 +192,9 @@ article img {
 .bi-radio:nth-of-type(5):checked ~ .bi-controls > .bi-tab:nth-child(5),
 .bi-radio:nth-of-type(6):checked ~ .bi-controls > .bi-tab:nth-child(6),
 .bi-radio:nth-of-type(7):checked ~ .bi-controls > .bi-tab:nth-child(7),
-.bi-radio:nth-of-type(8):checked ~ .bi-controls > .bi-tab:nth-child(8) {
+.bi-radio:nth-of-type(8):checked ~ .bi-controls > .bi-tab:nth-child(8),
+.bi-radio:nth-of-type(9):checked ~ .bi-controls > .bi-tab:nth-child(9),
+.bi-radio:nth-of-type(10):checked ~ .bi-controls > .bi-tab:nth-child(10) {
   background-color: var(--bi-tab-bg-active);
   color: var(--bi-tab-fg-active);
   font-weight: 500;
@@ -221,5 +227,12 @@ article img {
   .bi-radio:not(:first-of-type):checked ~ .bi-grid {
     grid-template-columns: 1fr;
     gap: 2.5rem;
+  }
+}
+
+/* 纸面上点不了选项，按钮组没有意义 */
+@media print {
+  .bi-controls {
+    display: none;
   }
 }
