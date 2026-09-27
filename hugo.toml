@@ -96,6 +96,7 @@ buildFuture = false
 #  主题参数：外观与功能
 # ============================================================
 [params]
+  copyright = "© { year } Stlara-F"
   # 站点简介随语言变，写在文件末尾的 [languages.<语言>.params] 里。
   # 它用在首页的 <meta name="description">，也是没写 summary 的页面的兜底。
 
@@ -240,19 +241,13 @@ buildFuture = false
   [[menu.footer]]
     pageRef = "about"
     weight = 20
-
-# ============================================================
-#  多语言
-#  加一种语言 = 在这里加一块 + 建对应语言的内容文件（如 index.en.md）。
-#  不用改模板或代码。每块的 displayName 是语言切换菜单里显示的名字，必填。
-# ============================================================
 [languages]
   [languages.zh-cn]
-    # locale 决定 <html lang> 与 hreflang 里写的语言代码。它和上面
-    # defaultContentLanguage 的 "zh-cn" 大小写不同：键名小写、locale 规范
-    # 大小写，两边都不要改（写混了不报错，只是输出悄悄变样）。
+    # locale 决定 <html lang> 与 hreflang 里写的语言代码，用规范大小写。
+    # 键名统一小写是命名约定，大小写不影响产物；但上面的
+    # defaultContentLanguage 必须与键名逐字相同，否则本语言的 params 会整块失效。
     locale = "zh-CN"
-    title = "Stlara 的博客"
+    title = "Stlara-F's blog"
     weight = 1
     [languages.zh-cn.params]
       displayName = "简体中文"
@@ -261,7 +256,7 @@ buildFuture = false
       # 漏写会退回主题默认的 :date_long（英文格式）。
       dateFormat = "2006年1月2日"
       [languages.zh-cn.params.author]
-        headline = "把想明白的东西写下来。"
+        headline = "把想明白的东西和想不明白的东西写下来。"
         bio = "在这里记录学习笔记、技术总结和一些零散的想法。"
 
   [languages.en]
