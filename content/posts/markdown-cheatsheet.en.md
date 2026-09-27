@@ -6,6 +6,7 @@ summary: "This is all you need to remember for writing posts. Keep it around and
 tags: ["Markdown", "Writing"]
 categories: ["Site Notes"]
 showTableOfContents: true
+bilingual: true
 ---
 
 The Markdown you actually need for blogging is a small subset. What follows covers about 95% of real use, and you can copy it straight out.

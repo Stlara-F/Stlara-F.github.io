@@ -432,6 +432,33 @@ def check_content(root: Path) -> None:
             warn(f"{rel}：正文是空的")
 
 
+def check_bilingual(root: Path) -> None:
+    """开了双语对照的内容，得真有另一种语言版本可以对照。
+
+    `bilingual: true` 只在同 basename 存在另一个语言文件时才有意义 ——
+    Hugo 的 `.Translations` 那时才非空。只有一份文件时开关是空转：
+    页面上不会出现对照控件，而且构建不报任何错。这是典型的静默失败。
+    """
+    content_dir = root / "content"
+    if not content_dir.is_dir():
+        return
+
+    groups: dict[str, list[Path]] = {}
+    for md in content_dir.rglob("*.md"):
+        key = f"{md.parent.as_posix()}/{strip_lang_suffix(md.name)}"
+        groups.setdefault(key, []).append(md)
+
+    for key, files in sorted(groups.items()):
+        if len(files) > 1:
+            continue
+        md = files[0]
+        fm, _ = split_front_matter(md)
+        if fm and parse_fields(fm).get("bilingual"):
+            rel = md.relative_to(root).as_posix()
+            warn(f"{rel}：开了双语对照，但 {Path(key).name} 只有这一份语言版本，"
+                 f"页面上不会出现对照控件（这个开关是空转的）")
+
+
 # ---------------------------------------------------------------- 卫生检查
 
 # 构建产物提交进仓库会让 diff 变噪音，还容易和别人冲突
@@ -495,6 +522,7 @@ def main() -> int:
         check_languages(cfg)
         check_default_language_suffix(root, cfg)
     check_content(root)
+    check_bilingual(root)
     check_icons(root)
     check_tracked_artifacts(root)
     check_workflow_runs_this_checker(root)

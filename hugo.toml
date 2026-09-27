@@ -270,3 +270,99 @@ buildFuture = false
       [languages.en.params.author]
         headline = "Writing down what I have figured out."
         bio = "Study notes, technical write-ups, and scattered thoughts."
+
+  [languages.ru]
+    locale = "ru"
+    title = "Блог Stlara-F"
+    weight = 3
+    [languages.ru.params]
+      displayName = "Русский"
+      description = "Заметки о технологиях, чтении и повседневных мыслях."
+      dateFormat = "02.01.2006"
+      [languages.ru.params.author]
+        headline = "Записываю то, что понял, — и то, что ещё нет."
+        bio = "Здесь я записываю учебные заметки, технические конспекты и разрозненные мысли."
+
+  [languages.fr]
+    locale = "fr"
+    title = "Le blog de Stlara-F"
+    weight = 4
+    [languages.fr.params]
+      displayName = "Français"
+      description = "Notes sur la technologie, la lecture et les pensées du quotidien."
+      dateFormat = "02/01/2006"
+      [languages.fr.params.author]
+        headline = "Écrire ce que j'ai compris — et ce qui reste flou."
+        bio = "Notes d'étude, résumés techniques et pensées éparses."
+
+  [languages.de]
+    locale = "de"
+    title = "Stlara-Fs Blog"
+    weight = 5
+    [languages.de.params]
+      displayName = "Deutsch"
+      description = "Notizen über Technik, Lesen und alltägliche Gedanken."
+      dateFormat = "02.01.2006"
+      [languages.de.params.author]
+        headline = "Aufschreiben, was verstanden ist — und was nicht."
+        bio = "Lernnotizen, technische Zusammenfassungen und verstreute Gedanken."
+
+  [languages.it]
+    locale = "it"
+    title = "Il blog di Stlara-F"
+    weight = 6
+    [languages.it.params]
+      displayName = "Italiano"
+      description = "Note su tecnologia, lettura e pensieri di ogni giorno."
+      dateFormat = "02/01/2006"
+      [languages.it.params.author]
+        headline = "Scrivere ciò che ho capito — e ciò che ancora non capisco."
+        bio = "Appunti di studio, sintesi tecniche e pensieri sparsi."
+
+  [languages.ja]
+    locale = "ja"
+    title = "Stlara-F のブログ"
+    weight = 7
+    [languages.ja.params]
+      displayName = "日本語"
+      description = "技術や読書、日々の考えを綴るノート。"
+      dateFormat = "2006年1月2日"
+      [languages.ja.params.author]
+        headline = "わかったことを、わからないまま残さず書き留める。"
+        bio = "学習ノート、技術メモ、そして散らばった考えをここに記します。"
+
+  [languages.pt-br]
+    locale = "pt-BR"
+    title = "Blog do Stlara-F"
+    weight = 8
+    [languages.pt-br.params]
+      displayName = "Português (Brasil)"
+      description = "Notas sobre tecnologia, leitura e reflexões do dia a dia."
+      dateFormat = "02/01/2006"
+      [languages.pt-br.params.author]
+        headline = "Escrever o que entendi — e o que ainda não entendi."
+        bio = "Notas de estudo, resumos técnicos e pensamentos soltos."
+
+  [languages.ko]
+    locale = "ko"
+    title = "Stlara-F의 블로그"
+    weight = 9
+    [languages.ko.params]
+      displayName = "한국어"
+      description = "기술, 독서, 일상의 생각을 기록합니다."
+      dateFormat = "2006년 1월 2일"
+      [languages.ko.params.author]
+        headline = "이해한 것과 이해하지 못한 것을 모두 적습니다."
+        bio = "학습 노트, 기술 정리, 그리고 흩어진 생각들을 기록합니다."
+
+  [languages.eo]
+    locale = "eo"
+    title = "La blogo de Stlara-F"
+    weight = 10
+    [languages.eo.params]
+      displayName = "Esperanto"
+      description = "Notoj pri tekniko, legado kaj ĉiutagaj pensoj."
+      dateFormat = "2006-01-02"
+      [languages.eo.params.author]
+        headline = "Skribi tion, kion mi komprenis — kaj tion, kion ne."
+        bio = "Lernnotoj, teknikaj resumoj kaj disaj pensoj."

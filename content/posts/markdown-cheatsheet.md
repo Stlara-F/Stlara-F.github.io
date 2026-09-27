@@ -6,6 +6,7 @@ summary: "写博客只需要记住这些就够了。把这篇留着，忘了就�
 tags: ["Markdown", "写作"]
 categories: ["建站笔记"]
 showTableOfContents: true
+bilingual: true
 ---
 
 写博客用到的 Markdown 语法其实很少。下面这些覆盖了 95% 的场景，可以直接复制去改。

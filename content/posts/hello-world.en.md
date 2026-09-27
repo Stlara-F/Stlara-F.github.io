@@ -6,6 +6,7 @@ summary: "The first real post. A rundown of the technical choices behind this bl
 tags: ["Hugo", "GitHub Pages"]
 categories: ["Site Notes"]
 showTableOfContents: true
+bilingual: true
 ---
 
 This is the first post. Rather than writing "Hello World", I would rather lay out how this blog is put together — it will be handy to look back on later.

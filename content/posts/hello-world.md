@@ -6,6 +6,7 @@ summary: "第一篇正式文章。交代一下这个博客的技术选型，以�
 tags: ["Hugo", "GitHub Pages"]
 categories: ["建站笔记"]
 showTableOfContents: true
+bilingual: true
 ---
 
 这是博客的第一篇文章。与其写「Hello World」，不如先把这套博客的技术底细交代清楚——以后回头看也方便。
