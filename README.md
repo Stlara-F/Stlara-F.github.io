@@ -9,11 +9,12 @@
 
 ```
 blog/
-├── hugo.toml              站点配置（标题、配色、菜单、作者信息都在这里改）
+├── hugo.toml              站点配置（标题、配色、菜单、作者信息、语言列表都在这里改）
 ├── content/               所有内容
 │   ├── _index.md          首页顶部那段文字
 │   ├── about.md           关于页
 │   └── posts/             文章都放这里
+├── i18n/                  站点自己覆盖的主题界面文案（主题已带 35 种语言，一般不用动）
 ├── assets/
 │   ├── css/custom.css     自定义样式，改外观主要改这个文件
 │   └── img/avatar.svg     头像
@@ -22,6 +23,7 @@ blog/
 ├── layouts/               覆盖主题模板用（空目录，git 不跟踪）
 ├── themes/blowfish/       主题本体（一般不用动）
 ├── tools/                 检查、发布、生成图标的小脚本
+├── docs/                  规范文档（多语言规则在 i18n.md）
 ├── public/                构建产物，自动生成，不用管也不用提交
 └── .github/workflows/     自动部署脚本
 ```
@@ -164,6 +166,27 @@ categories: ["分类名"]
 
 三者都是**构建时判断**。本站只在推送时构建，所以定时发布不是到点自己跳出来，
 而是到点之后的**下一次推送**才出现——写年终总结这类文章时会用到。
+
+### 写另一种语言的版本
+
+站点配了两种语言：中文（默认）和英文。中文文章的网址还是 `/posts/...`，
+英文的多一层 `/en/`。
+
+同一篇文章的两种语言版本靠**文件名后缀**配对：
+
+| 中文（默认语言，不加后缀） | 英文 |
+| --- | --- |
+| `content/posts/my-first-note.md` | `content/posts/my-first-note.en.md` |
+| `content/posts/my-first-note/index.md` | `content/posts/my-first-note/index.en.md` |
+
+两条要记住的规则：
+
+- **默认语言不加后缀。** 写成 `my-first-note.zh-cn.md` 反而不会被当成中文版。
+- **没有英文版的内容，不会出现在英文站点里。** 英文的 `Posts` / `About` 页只列有英文版的
+  内容，所以不会出现点进去打不开的链接；反过来也一样。
+
+要加第三种语言，在 `hugo.toml` 的 `[languages]` 里加一块，内容文件按同样的后缀命名即可。
+语言代码的大小写有讲究（`zh-CN` 和 `zh-cn` 分工不同），完整规则见 [docs/i18n.md](docs/i18n.md)。
 
 ---
 

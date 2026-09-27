@@ -97,7 +97,13 @@ def check_config(root: Path) -> dict | None:
     # languageCode 在 Hugo 0.158+ 已弃用
     if "languageCode" in cfg:
         warn("hugo.toml 还在用已弃用的 languageCode，改用 locale")
-    if "locale" not in cfg:
+    # locale 写在顶层或默认语言块里都算数（多语言下写在语言块里）
+    langs = cfg.get("languages")
+    default_lang = cfg.get("defaultContentLanguage")
+    lang_locale = ""
+    if isinstance(langs, dict) and default_lang and isinstance(langs.get(default_lang), dict):
+        lang_locale = langs[default_lang].get("locale") or ""
+    if not cfg.get("locale") and not lang_locale:
         warn("hugo.toml 没有 locale，日期等本地化会退回英文")
 
     # 主题目录必须真的存在；theme.toml 是主题的清单文件
@@ -236,7 +242,11 @@ def check_author_links(root: Path, cfg: dict) -> None:
 
 
 def check_menu(cfg: dict) -> None:
-    """导航菜单每一项都要有名字和地址。"""
+    """导航菜单每一项都要能点、能显示文字。
+
+    文字有两个来源：显式写 name，或由 pageRef 指向页面的 title 提供。
+    多语言下用后者 —— 写死 name 会让每种语言都要重写一份菜单。
+    """
     menu = cfg.get("menu", {})
     if not isinstance(menu, dict):
         err("[[menu.*]] 配置格式不对")
@@ -248,8 +258,9 @@ def check_menu(cfg: dict) -> None:
         for i, item in enumerate(items, 1):
             if not isinstance(item, dict):
                 continue
-            if not item.get("name"):
-                err(f"[[menu.{section}]] 第 {i} 项缺少 name（菜单上会显示成空白）")
+            if not item.get("name") and not item.get("pageRef"):
+                err(f"[[menu.{section}]] 第 {i} 项既没有 name 也没有 pageRef，"
+                    f"菜单上会显示成空白")
             if not item.get("url") and not item.get("pageRef"):
                 err(f"[[menu.{section}]] 第 {i} 项（{item.get('name', '?')}）"
                     f"既没有 url 也没有 pageRef，点了没反应")
@@ -299,6 +310,15 @@ def parse_fields(fm_lines: list[str]) -> dict:
     return fields
 
 
+def strip_lang_suffix(name: str) -> str:
+    """去掉文件名里的语言后缀：index.en.md -> index.md、about.zh-CN.md -> about.md。
+
+    默认语言的文件不带后缀（那正是它留在根 URL 的原因），所以中文的
+    `_index.md` 与英文的 `_index.en.md` 在这里会归一到同一个名字。
+    """
+    return re.sub(r"\.[A-Za-z]{2}(?:-[A-Za-z]{2})?\.md$", ".md", name)
+
+
 def check_content(root: Path) -> None:
     """每篇内容的 front matter 该有的字段要有、类型要对。"""
     content_dir = root / "content"
@@ -314,8 +334,10 @@ def check_content(root: Path) -> None:
             continue
 
         fields = parse_fields(fm)
-        is_home = rel == "content/_index.md"
-        is_branch = md.name == "_index.md"
+        # 先去掉语言后缀再判断角色，否则 _index.en.md 会被当成普通文章
+        base_name = strip_lang_suffix(md.name)
+        is_home = base_name == "_index.md" and md.parent == content_dir
+        is_branch = base_name == "_index.md"
 
         # 首页刻意不写 title，否则正文上方会多出一个「首页」大标题
         if not fields.get("title") and not is_home:

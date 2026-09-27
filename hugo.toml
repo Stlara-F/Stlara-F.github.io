@@ -9,12 +9,13 @@ theme = "blowfish"
 # 站点网址。结尾的斜杠不能少，canonical 和 RSS 都按它拼。
 baseURL = "https://stlara-f.github.io/"
 
-# 站点标题：显示在浏览器标签页和页头
-title = "Stlara 的博客"
+# 站点标题、简介、作者介绍这些随语言变的，都在文件末尾的 [languages] 里各写一份。
 
 # 语言
 defaultContentLanguage = "zh-cn"
-locale = "zh-CN"
+# 默认语言不放进子目录：中文地址保持 /posts/... 不变，英文自动落到 /en/ 下。
+# 反过来会让已上线的中文链接全部搬家。
+defaultContentLanguageInSubdir = false
 hasCJKLanguage = true
 
 # 站点时区。文章里只写日期（如 2026-09-18）时，按这个时区解释，
@@ -95,8 +96,8 @@ buildFuture = false
 #  主题参数：外观与功能
 # ============================================================
 [params]
-  # 站点简介。用在首页的 <meta name="description">，也是没写 summary 的页面的兜底。
-  description = "这里记录我在技术、阅读和生活里的一些想法。"
+  # 站点简介随语言变，写在文件末尾的 [languages.<语言>.params] 里。
+  # 它用在首页的 <meta name="description">，也是没写 summary 的页面的兜底。
 
   # 配色方案。可选值：
   # autumn / avocado / bloody / blowfish / burufugu / congo / fire / forest
@@ -206,8 +207,8 @@ buildFuture = false
     name = "Stlara-F"
     # 头像放在 assets/img/ 下，这里写相对路径
     image = "img/avatar.svg"
-    headline = "把想明白的东西写下来。"
-    bio = "在这里记录学习笔记、技术总结和一些零散的想法。"
+    # headline（一句话介绍）与 bio（简介）随语言变，
+    # 写在文件末尾的 [languages.<语言>.params.author] 里。
     # 社交链接。等号左边的名字就是图标名，取值见 themes/blowfish/assets/icons/ 下的文件名。
     links = [
       { github = "https://github.com/Stlara-F" },
@@ -215,29 +216,58 @@ buildFuture = false
 
 # ============================================================
 #  导航菜单
+#  菜单上显示的文字不写在这里：它取 pageRef 指向页面的 title。
+#  所以中文菜单显示「文章」，英文菜单自动显示 "Posts"。
+#  要改菜单文字，就去改那个页面的 title（如 content/posts/_index.md）。
 # ============================================================
 [menu]
   [[menu.main]]
-    name = "文章"
     pageRef = "posts"
     weight = 10
 
   [[menu.main]]
-    name = "标签"
     pageRef = "tags"
     weight = 20
 
   [[menu.main]]
-    name = "关于"
     pageRef = "about"
     weight = 30
 
   [[menu.footer]]
-    name = "标签"
     pageRef = "tags"
     weight = 10
 
   [[menu.footer]]
-    name = "关于"
     pageRef = "about"
     weight = 20
+
+# ============================================================
+#  多语言
+#  加一种语言 = 在这里加一块 + 建对应语言的内容文件（如 index.en.md）。
+#  不用改模板或代码。每块的 displayName 是语言切换菜单里显示的名字，必填。
+# ============================================================
+[languages]
+  [languages.zh-cn]
+    # locale 决定 <html lang>、hreflang，以及用主题的哪个翻译文件
+    # （主题自带 i18n/zh-CN.yaml）。它和上面 defaultContentLanguage 的
+    # "zh-cn" 大小写不同，两边都不要改。
+    locale = "zh-CN"
+    title = "Stlara 的博客"
+    weight = 1
+    [languages.zh-cn.params]
+      displayName = "简体中文"
+      description = "这里记录我在技术、阅读和生活里的一些想法。"
+      [languages.zh-cn.params.author]
+        headline = "把想明白的东西写下来。"
+        bio = "在这里记录学习笔记、技术总结和一些零散的想法。"
+
+  [languages.en]
+    locale = "en"
+    title = "Stlara's Blog"
+    weight = 2
+    [languages.en.params]
+      displayName = "English"
+      description = "Notes on technology, reading, and everyday thoughts."
+      [languages.en.params.author]
+        headline = "Writing down what I have figured out."
+        bio = "Study notes, technical write-ups, and scattered thoughts."

@@ -30,6 +30,8 @@
 | 允许的版本区间 | `themes/blowfish/config.toml` 的 `[module.hugoVersion]`，越界由 `tools/check.py` 拦 |
 | 用法与个性化说明 | `README.md` |
 | 各配置项含义 | `hugo.toml` 行内注释 |
+| 语言集合 | `hugo.toml` 的 `[languages]` |
+| i18n 规则（命名、目录、复用约束、编辑器两侧的分工） | `docs/i18n.md` |
 
 ## 硬约束（违反会直接坏）
 
@@ -38,6 +40,9 @@
 - 主题 vendor 在 `themes/blowfish/`：要改模板就复制到站点根 `layouts/` 同路径再改，不直接动主题
 - 社交链接的 email 只填明文地址，主题会自己补 `mailto:`
 - `typeit` 短代码不可用：其依赖库不在主题里；要用时先从 Blowfish 上游恢复 `themes/blowfish/assets/lib/typeit/typeit.umd.js`
+- `defaultContentLanguageInSubdir` 必须保持 `false`：中文地址是已上线的 `/posts/...`，翻成 `true` 会让它们全部搬家
+- 语言代码的大小写分工不能混：`locale = "zh-CN"` 决定 `<html lang>` / `hreflang` / 主题文案的匹配；`[languages.zh-cn]` 的**键名**决定 URL 前缀。写成 `locale = "zh-cn"` 或 `[languages.zh-CN]` 都会错
+- 内容的默认语言版本**不加语言后缀**（`about.md`，不是 `about.zh-cn.md`）
 - `.workbuddy-ai/`、`.mimosa/` 是本机工具状态：不读、不提交、不写进任何交付物
 
 ## 常用命令
