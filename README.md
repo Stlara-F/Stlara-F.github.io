@@ -14,7 +14,7 @@ blog/
 │   ├── _index.md          首页顶部那段文字
 │   ├── about.md           关于页
 │   └── posts/             文章都放这里
-├── i18n/                  站点自己覆盖的主题界面文案（主题已带 35 种语言，一般不用动）
+├── i18n/                  站点自己覆盖的主题界面文案（主题已带 36 种语言，一般不用动）
 ├── assets/
 │   ├── css/custom.css     自定义样式，改外观主要改这个文件
 │   └── img/avatar.svg     头像
@@ -266,7 +266,7 @@ git push
 | 版本 | 工作流钉住的 Hugo 版本有没有越出主题声明的区间 |
 | 社交链接 | 图标名在主题里有没有对应文件、email 有没有误写 `mailto:` 前缀 |
 | 菜单 | 每一项有没有 url 或 pageRef（**不写 name** —— 菜单文字由页面自己的 title 提供，见上面「写另一种语言的版本」） |
-| 语言 | 语言代码的大小写分工对不对（`locale` 规范大小写、`[languages.<键名>]` 小写）、默认语言的内容文件有没有误加语言后缀 |
+| 语言 | `defaultContentLanguage` 与某个 `[languages.<键名>]` 逐字相同、`locale` 规范大小写、键名全小写、默认语言的内容文件有没有误加语言后缀 |
 | 内容 | front matter 的 title / date 在不在、draft 是不是 true/false |
 | 图标 | `site.webmanifest` 引用的文件存不存在 |
 | 仓库 | 构建产物（public/）有没有被误提交 |

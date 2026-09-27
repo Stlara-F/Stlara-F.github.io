@@ -130,18 +130,32 @@ def canonical_locale(locale: str) -> str:
 
 
 def check_languages(cfg: dict) -> None:
-    """语言代码的大小写分工：locale 用规范大小写，[languages.<键名>] 用小写。
+    """语言代码的三条规则：默认语言要对上键名，locale 用规范大小写，键名用小写。
 
-    写混了不会报错，只是输出悄悄变样：locale 写成 zh-cn，`<html lang>` 与
-    `hreflang` 就跟着变小写；键名写成 zh-CN，中文页面会被搬到 /zh-CN/ 下。
+    前两条都是静默错：`defaultContentLanguage` 对不上键名时 Hugo 不报错，默认语言会
+    整块丢掉 params（站点简介、作者、displayName、dateFormat 一起失效）；`locale`
+    写错只会让 `hreflang` 变样。第三条是本项目的命名约定，不影响产物。
     """
     langs = cfg.get("languages")
     if not isinstance(langs, dict):
         return
+
+    default = cfg.get("defaultContentLanguage")
+    if default and default not in langs:
+        near = next((k for k in langs if k.lower() == str(default).lower()), None)
+        hint = f"，应该是 {near!r}" if near else ""
+        err(f"defaultContentLanguage 写的是 {default!r}，[languages] 里却没有这个键名"
+            f"{hint}。对不上时 Hugo 不报错，默认语言会整块丢掉 params"
+            f"（站点简介、作者、displayName、dateFormat 一起失效）")
+
     for key, block in langs.items():
         if key != key.lower():
-            warn(f"[languages.{key}] 的键名用了大写。它决定 URL 前缀，"
-                 f"应该写成 [languages.{key.lower()}]")
+            # Hugo 官方允许 RFC 5646 的键名（示例有 [languages.pt-BR]），大小写
+            # 不影响产物；本项目统一小写，是为了让键名、URL 前缀、内容后缀、
+            # 编辑器读到的语言代码保持同一种拼写。
+            warn(f"[languages.{key}] 的键名用了大写。本项目约定全小写"
+                 f"（与 URL 前缀、内容后缀、编辑器读到的语言代码同一拼写），"
+                 f"建议写成 [languages.{key.lower()}]")
         if not isinstance(block, dict):
             continue
         locale = block.get("locale")

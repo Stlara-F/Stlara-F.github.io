@@ -41,7 +41,8 @@
 - 社交链接的 email 只填明文地址，主题会自己补 `mailto:`
 - `typeit` 短代码不可用：其依赖库不在主题里；要用时先从 Blowfish 上游恢复 `themes/blowfish/assets/lib/typeit/typeit.umd.js`
 - `defaultContentLanguageInSubdir` 必须保持 `false`：中文地址是已上线的 `/posts/...`，翻成 `true` 会让它们全部搬家
-- 语言代码的大小写分工不能混：`locale = "zh-CN"` 决定 `<html lang>` / `hreflang`；`[languages.zh-cn]` 的**键名**决定 URL 前缀。写成 `locale = "zh-cn"` 或 `[languages.zh-CN]` 都会错，且 `tools/check.py` 只发警告、构建照样成功
+- `defaultContentLanguage` 必须与某个 `[languages.<键名>]` **逐字相同**：对不上时 Hugo 不报错，默认语言会整块丢掉 `params`（站点简介、作者、`displayName`、`dateFormat` 一起失效）
+- 语言代码的大小写分工：`locale` 用规范大小写（`zh-CN`），决定 `<html lang>` / `hreflang`；键名用全小写（`zh-cn`）。键名大小写不影响产物（URL 路径默认转小写），小写是本项目的命名约定
 - 内容的默认语言版本**不加语言后缀**（`about.md`，不是 `about.zh-cn.md`）
 - `.workbuddy-ai/`、`.mimosa/` 是本机工具状态：不读、不提交、不写进任何交付物
 
