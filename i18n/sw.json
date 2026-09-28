@@ -1,0 +1,120 @@
+{
+  "global": {
+    "language": "Kiswahili"
+  },
+  "article": {
+    "anchor_label": "Kiungo",
+    "date": "{{ .Date }}",
+    "date_updated": "Imesasishwa: {{ .Date }}",
+    "draft": "Rasimu",
+    "edit_title": "Hariri maudhui",
+    "reading_time": {
+      "one": "Dakika {{ .Count }}",
+      "other": "Dakika {{ .Count }}"
+    },
+    "reading_time_title": "Muda wa kusoma",
+    "table_of_contents": "Yaliyomo",
+    "word_count": {
+      "one": "Maneno {{ .Count }}",
+      "other": "Maneno {{ .Count }}"
+    },
+    "views": {
+      "one": "Mionekano {{ .Count }}",
+      "other": "Mionekano {{ .Count }}"
+    },
+    "likes": {
+      "one": "Vipendwa {{ .Count }}",
+      "other": "Vipendwa {{ .Count }}"
+    },
+    "part_of_series": "Makala hii ni sehemu ya mfululizo.",
+    "part": "§",
+    "this_article": "Makala hii",
+    "related_articles": "Makala yanayohusiana",
+    "reply_by_email": "Jibu kwa barua pepe",
+    "reply_to": "Jibu {{ .Title }}",
+    "zen_mode_title": {
+      "enable": "Washa hali ya kusoma",
+      "disable": "Zima hali ya kusoma"
+    }
+  },
+  "a11y": {
+    "title": "Mipangilio ya ufikivu",
+    "disable_blur": "Zima ukungu",
+    "disable_images": "Zima picha za mandhari",
+    "show_link_underline": "Onyesha mstari chini ya viungo",
+    "font_size": "Ukubwa wa herufi"
+  },
+  "author": {
+    "byline_title": "Mwandishi"
+  },
+  "code": {
+    "copy": "Nakili",
+    "copied": "Imenakiliwa"
+  },
+  "error": {
+    "404_title": "Ukurasa haupatikani :confused:",
+    "404_error": "Hitilafu 404",
+    "404_description": "Inaonekana ukurasa ulioomba haupo.",
+    "404_home": "Rudi mwanzo"
+  },
+  "footer": {
+    "dark_appearance": "Badilisha kwenda hali ya giza",
+    "light_appearance": "Badilisha kwenda hali ya mwanga",
+    "powered_by": "Inaendeshwa na {{ .Hugo }} &amp; {{ .Theme }}"
+  },
+  "list": {
+    "externalurl_title": "Kiungo cha tovuti ya nje",
+    "no_articles": "Hakuna makala ya kuonyesha bado."
+  },
+  "nav": {
+    "scroll_to_top_title": "Rudi juu",
+    "skip_to_main": "Ruka hadi maudhui"
+  },
+  "search": {
+    "open_button_title": "Tafuta (/)",
+    "close_button_title": "Funga (Esc)",
+    "input_placeholder": "Tafuta"
+  },
+  "sharing": {
+    "email": "Tuma kwa barua pepe",
+    "facebook": "Shiriki kwenye Facebook",
+    "line": "Shiriki kwenye LINE",
+    "linkedin": "Shiriki kwenye LinkedIn",
+    "pinterest": "Bandika kwenye Pinterest",
+    "reddit": "Tuma kwenye Reddit",
+    "twitter": "Shiriki kwenye Twitter",
+    "bluesky": "Chapisha kwenye Bluesky",
+    "whatsapp": "Shiriki kwa WhatsApp",
+    "telegram": "Shiriki kwa Telegram"
+  },
+  "shortcode": {
+    "recent_articles": "Makala ya hivi karibuni"
+  },
+  "recent": {
+    "show_more": "Onyesha zaidi"
+  },
+  "admonition": {
+    "abstract": "Muhtasari",
+    "bug": "Hitilafu",
+    "caution": "Tahadhari",
+    "danger": "Hatari",
+    "example": "Mfano",
+    "failure": "Kushindwa",
+    "important": "Muhimu",
+    "info": "Taarifa",
+    "note": "Dokezo",
+    "question": "Swali",
+    "quote": "Nukuu",
+    "success": "Mafanikio",
+    "tip": "Kidokezo",
+    "todo": "Kazi inayosubiri",
+    "warning": "Onyo"
+  },
+  "cookie_notice": {
+    "message_with_link": "Tovuti hii hutumia kuki na teknolojia kama hizo. Tafadhali soma sera yetu ya faragha",
+    "message": "Tovuti hii hutumia kuki na teknolojia kama hizo. Kwa kutumia tovuti hii unakubali hilo.",
+    "privacy_policy": "Sera ya faragha",
+    "button": "Nimeelewa",
+    "image_alt": "Aikoni ya kuki"
+  }
+}

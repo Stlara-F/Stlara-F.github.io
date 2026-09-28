@@ -366,3 +366,99 @@ buildFuture = false
       [languages.eo.params.author]
         headline = "Skribi tion, kion mi komprenis — kaj tion, kion ne."
         bio = "Lernnotoj, teknikaj resumoj kaj disaj pensoj."
+
+  [languages.sw]
+    locale = "sw"
+    title = "Blogu ya Stlara-F"
+    weight = 11
+    [languages.sw.params]
+      displayName = "Kiswahili"
+      description = "Maelezo kuhusu teknolojia, usomaji na mawazo ya kila siku."
+      dateFormat = "02/01/2006"
+      [languages.sw.params.author]
+        headline = "Kuandika yale niliyoyaelewa — na yale nisiyoyaelewa."
+        bio = "Madokezo ya kujifunza, muhtasari wa kiufundi na mawazo yaliyotawanyika."
+
+  [languages.ha]
+    locale = "ha"
+    title = "Blog ɗin Stlara-F"
+    weight = 12
+    [languages.ha.params]
+      displayName = "Hausa"
+      description = "Bayanai kan fasaha, karatu da tunanin yau da kullum."
+      dateFormat = "02/01/2006"
+      [languages.ha.params.author]
+        headline = "Rubuta abin da na fahimta — da abin da ban fahimta ba."
+        bio = "Bayanan karatu, taƙaitaccen fasaha da tunani dabam-dabam."
+
+  [languages.yo]
+    locale = "yo"
+    title = "Búlọ́ọ̀gì Stlara-F"
+    weight = 13
+    [languages.yo.params]
+      displayName = "Yorùbá"
+      description = "Àwọn àkọsílẹ̀ nípa ìmọ̀ ẹ̀rọ, kíkà àti àwọn èrò ojoojúmọ́."
+      dateFormat = "02/01/2006"
+      [languages.yo.params.author]
+        headline = "Kíkọ ohun tí ó yé mi — àti ohun tí kò tíì yé mi."
+        bio = "Àkọsílẹ̀ ẹ̀kọ́, àkópọ̀ ìmọ̀ ẹ̀rọ àti àwọn èrò tí ó tú ká."
+
+  [languages.af]
+    locale = "af"
+    title = "Stlara-F se blog"
+    weight = 14
+    [languages.af.params]
+      displayName = "Afrikaans"
+      description = "Notas oor tegnologie, lees en alledaagse gedagtes."
+      dateFormat = "02/01/2006"
+      [languages.af.params.author]
+        headline = "Neerskryf wat ek verstaan — en wat ek nog nie verstaan nie."
+        bio = "Studienotas, tegniese samevattings en los gedagtes."
+
+  [languages.es]
+    locale = "es"
+    title = "El blog de Stlara-F"
+    weight = 15
+    [languages.es.params]
+      displayName = "Español"
+      description = "Notas sobre tecnología, lectura y pensamientos cotidianos."
+      dateFormat = "02/01/2006"
+      [languages.es.params.author]
+        headline = "Escribir lo que entiendo — y lo que todavía no."
+        bio = "Apuntes de estudio, resúmenes técnicos y pensamientos sueltos."
+
+  [languages.id]
+    locale = "id"
+    title = "Blog Stlara-F"
+    weight = 16
+    [languages.id.params]
+      displayName = "Bahasa Indonesia"
+      description = "Catatan tentang teknologi, bacaan, dan pikiran sehari-hari."
+      dateFormat = "02/01/2006"
+      [languages.id.params.author]
+        headline = "Menuliskan yang sudah kupahami — dan yang belum."
+        bio = "Catatan belajar, rangkuman teknis, dan pikiran yang berserakan."
+
+  [languages.bn]
+    locale = "bn"
+    title = "Stlara-F এর ব্লগ"
+    weight = 17
+    [languages.bn.params]
+      displayName = "বাংলা"
+      description = "প্রযুক্তি, পড়াশোনা আর দৈনন্দিন ভাবনার নোট।"
+      dateFormat = "02/01/2006"
+      [languages.bn.params.author]
+        headline = "যা বুঝেছি তা লিখে রাখা — আর যা এখনও বুঝিনি তাও।"
+        bio = "পড়ার নোট, প্রযুক্তির সারসংক্ষেপ আর ছড়িয়ে থাকা ভাবনা।"
+
+  [languages.vi]
+    locale = "vi"
+    title = "Blog của Stlara-F"
+    weight = 18
+    [languages.vi.params]
+      displayName = "Tiếng Việt"
+      description = "Ghi chép về công nghệ, việc đọc và những suy nghĩ hằng ngày."
+      dateFormat = "02/01/2006"
+      [languages.vi.params.author]
+        headline = "Viết lại điều đã hiểu — và cả điều chưa hiểu."
+        bio = "Ghi chép học tập, tóm tắt kỹ thuật và những suy nghĩ rời rạc."

@@ -1,0 +1,120 @@
+{
+  "global": {
+    "language": "Hausa"
+  },
+  "article": {
+    "anchor_label": "Mahaɗi",
+    "date": "{{ .Date }}",
+    "date_updated": "An sabunta: {{ .Date }}",
+    "draft": "Daftari",
+    "edit_title": "Gyara abun ciki",
+    "reading_time": {
+      "one": "Minti {{ .Count }}",
+      "other": "Minti {{ .Count }}"
+    },
+    "reading_time_title": "Lokacin karatu",
+    "table_of_contents": "Abun ciki",
+    "word_count": {
+      "one": "Kalmomi {{ .Count }}",
+      "other": "Kalmomi {{ .Count }}"
+    },
+    "views": {
+      "one": "Kallo {{ .Count }}",
+      "other": "Kallo {{ .Count }}"
+    },
+    "likes": {
+      "one": "So {{ .Count }}",
+      "other": "So {{ .Count }}"
+    },
+    "part_of_series": "Wannan labarin wani ɓangare ne na jerin.",
+    "part": "§",
+    "this_article": "Wannan labarin",
+    "related_articles": "Labarai masu alaƙa",
+    "reply_by_email": "Amsa ta imel",
+    "reply_to": "Amsa {{ .Title }}",
+    "zen_mode_title": {
+      "enable": "Kunna yanayin karatu",
+      "disable": "Kashe yanayin karatu"
+    }
+  },
+  "a11y": {
+    "title": "Saitunan samun dama",
+    "disable_blur": "Kashe ɓarkewar hoto",
+    "disable_images": "Kashe hotunan bango",
+    "show_link_underline": "Nuna layin ƙasan mahaɗi",
+    "font_size": "Girman rubutu"
+  },
+  "author": {
+    "byline_title": "Marubuci"
+  },
+  "code": {
+    "copy": "Kwafi",
+    "copied": "An kwafa"
+  },
+  "error": {
+    "404_title": "Ba a sami shafin ba :confused:",
+    "404_error": "Kuskure 404",
+    "404_description": "Da alama shafin da ka nema babu shi.",
+    "404_home": "Koma shafin farko"
+  },
+  "footer": {
+    "dark_appearance": "Koma yanayin duhu",
+    "light_appearance": "Koma yanayin haske",
+    "powered_by": "Ana amfani da {{ .Hugo }} &amp; {{ .Theme }}"
+  },
+  "list": {
+    "externalurl_title": "Mahaɗi zuwa waje",
+    "no_articles": "Babu labarin da za a nuna a nan tukuna."
+  },
+  "nav": {
+    "scroll_to_top_title": "Koma sama",
+    "skip_to_main": "Tsallake zuwa babban abun ciki"
+  },
+  "search": {
+    "open_button_title": "Bincika (/)",
+    "close_button_title": "Rufe (Esc)",
+    "input_placeholder": "Bincika"
+  },
+  "sharing": {
+    "email": "Aika ta imel",
+    "facebook": "Raba a Facebook",
+    "line": "Raba a LINE",
+    "linkedin": "Raba a LinkedIn",
+    "pinterest": "Liƙa a Pinterest",
+    "reddit": "Aika zuwa Reddit",
+    "twitter": "Raba a Twitter",
+    "bluesky": "Wallafa a Bluesky",
+    "whatsapp": "Raba ta WhatsApp",
+    "telegram": "Raba ta Telegram"
+  },
+  "shortcode": {
+    "recent_articles": "Sabbin labarai"
+  },
+  "recent": {
+    "show_more": "Nuna ƙari"
+  },
+  "admonition": {
+    "abstract": "Taƙaitawa",
+    "bug": "Kuskure",
+    "caution": "Tsanaki",
+    "danger": "Haɗari",
+    "example": "Misali",
+    "failure": "Gazawa",
+    "important": "Muhimmi",
+    "info": "Bayani",
+    "note": "Lura",
+    "question": "Tambaya",
+    "quote": "Ambato",
+    "success": "Nasara",
+    "tip": "Shawara",
+    "todo": "Aikin da ya rage",
+    "warning": "Gargaɗi"
+  },
+  "cookie_notice": {
+    "message_with_link": "Wannan rukunin yanar gizo na amfani da kukis da makamantansu. Don Allah ka karanta manufar sirrinmu",
+    "message": "Wannan rukunin yanar gizo na amfani da kukis da makamantansu. Yin amfani da shi yana nuna ka yarda.",
+    "privacy_policy": "Manufar sirri",
+    "button": "Na gane",
+    "image_alt": "Alamar kuki"
+  }
+}

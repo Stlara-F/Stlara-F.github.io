@@ -180,7 +180,15 @@ article img {
 .bi-radio:nth-of-type(7):checked ~ .bi-grid > .bi-pane:nth-child(7),
 .bi-radio:nth-of-type(8):checked ~ .bi-grid > .bi-pane:nth-child(8),
 .bi-radio:nth-of-type(9):checked ~ .bi-grid > .bi-pane:nth-child(9),
-.bi-radio:nth-of-type(10):checked ~ .bi-grid > .bi-pane:nth-child(10) {
+.bi-radio:nth-of-type(10):checked ~ .bi-grid > .bi-pane:nth-child(10),
+.bi-radio:nth-of-type(11):checked ~ .bi-grid > .bi-pane:nth-child(11),
+.bi-radio:nth-of-type(12):checked ~ .bi-grid > .bi-pane:nth-child(12),
+.bi-radio:nth-of-type(13):checked ~ .bi-grid > .bi-pane:nth-child(13),
+.bi-radio:nth-of-type(14):checked ~ .bi-grid > .bi-pane:nth-child(14),
+.bi-radio:nth-of-type(15):checked ~ .bi-grid > .bi-pane:nth-child(15),
+.bi-radio:nth-of-type(16):checked ~ .bi-grid > .bi-pane:nth-child(16),
+.bi-radio:nth-of-type(17):checked ~ .bi-grid > .bi-pane:nth-child(17),
+.bi-radio:nth-of-type(18):checked ~ .bi-grid > .bi-pane:nth-child(18) {
   display: block;
 }
 
@@ -194,7 +202,15 @@ article img {
 .bi-radio:nth-of-type(7):checked ~ .bi-controls > .bi-tab:nth-child(7),
 .bi-radio:nth-of-type(8):checked ~ .bi-controls > .bi-tab:nth-child(8),
 .bi-radio:nth-of-type(9):checked ~ .bi-controls > .bi-tab:nth-child(9),
-.bi-radio:nth-of-type(10):checked ~ .bi-controls > .bi-tab:nth-child(10) {
+.bi-radio:nth-of-type(10):checked ~ .bi-controls > .bi-tab:nth-child(10),
+.bi-radio:nth-of-type(11):checked ~ .bi-controls > .bi-tab:nth-child(11),
+.bi-radio:nth-of-type(12):checked ~ .bi-controls > .bi-tab:nth-child(12),
+.bi-radio:nth-of-type(13):checked ~ .bi-controls > .bi-tab:nth-child(13),
+.bi-radio:nth-of-type(14):checked ~ .bi-controls > .bi-tab:nth-child(14),
+.bi-radio:nth-of-type(15):checked ~ .bi-controls > .bi-tab:nth-child(15),
+.bi-radio:nth-of-type(16):checked ~ .bi-controls > .bi-tab:nth-child(16),
+.bi-radio:nth-of-type(17):checked ~ .bi-controls > .bi-tab:nth-child(17),
+.bi-radio:nth-of-type(18):checked ~ .bi-controls > .bi-tab:nth-child(18) {
   background-color: var(--bi-tab-bg-active);
   color: var(--bi-tab-fg-active);
   font-weight: 500;

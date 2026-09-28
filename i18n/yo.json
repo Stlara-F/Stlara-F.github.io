@@ -1,0 +1,120 @@
+{
+  "global": {
+    "language": "Yorùbá"
+  },
+  "article": {
+    "anchor_label": "Ìsopọ̀",
+    "date": "{{ .Date }}",
+    "date_updated": "Àtúnṣe: {{ .Date }}",
+    "draft": "Àdàkọ",
+    "edit_title": "Ṣàtúnṣe àkóónú",
+    "reading_time": {
+      "one": "Ìṣẹ́jú {{ .Count }}",
+      "other": "Ìṣẹ́jú {{ .Count }}"
+    },
+    "reading_time_title": "Àkókò kíkà",
+    "table_of_contents": "Àkóónú",
+    "word_count": {
+      "one": "Ọ̀rọ̀ {{ .Count }}",
+      "other": "Ọ̀rọ̀ {{ .Count }}"
+    },
+    "views": {
+      "one": "Ìwò {{ .Count }}",
+      "other": "Ìwò {{ .Count }}"
+    },
+    "likes": {
+      "one": "Ìfẹ́ {{ .Count }}",
+      "other": "Ìfẹ́ {{ .Count }}"
+    },
+    "part_of_series": "Àpilẹ̀kọ yìí jẹ́ apá kan nínú ọ̀wọ́.",
+    "part": "§",
+    "this_article": "Àpilẹ̀kọ yìí",
+    "related_articles": "Àwọn àpilẹ̀kọ tó jọra",
+    "reply_by_email": "Dáhùn nípasẹ̀ ímeèlì",
+    "reply_to": "Dáhùn {{ .Title }}",
+    "zen_mode_title": {
+      "enable": "Tan ipò kíkà",
+      "disable": "Pa ipò kíkà"
+    }
+  },
+  "a11y": {
+    "title": "Ètò ìráyè",
+    "disable_blur": "Pa ìṣújú",
+    "disable_images": "Pa àwọn àwòrán ẹ̀yìn",
+    "show_link_underline": "Fi ìlà sábẹ́ ìsopọ̀ hàn",
+    "font_size": "Ìwọ̀n lẹ́tà"
+  },
+  "author": {
+    "byline_title": "Òǹkọ̀wé"
+  },
+  "code": {
+    "copy": "Ṣe àdàkọ",
+    "copied": "A ti ṣe àdàkọ"
+  },
+  "error": {
+    "404_title": "A kò rí ojú-ìwé náà :confused:",
+    "404_error": "Àṣìṣe 404",
+    "404_description": "Ó dàbí pé ojú-ìwé tí o béèrè kò sí.",
+    "404_home": "Padà sí ojú-ìwé àkọ́kọ́"
+  },
+  "footer": {
+    "dark_appearance": "Yí padà sí ipò dúdú",
+    "light_appearance": "Yí padà sí ipò ìmọ́lẹ̀",
+    "powered_by": "Ó ń ṣiṣẹ́ lórí {{ .Hugo }} &amp; {{ .Theme }}"
+  },
+  "list": {
+    "externalurl_title": "Ìsopọ̀ sí ojú-ìwé òde",
+    "no_articles": "Kò tíì sí àpilẹ̀kọ láti fi hàn níbí."
+  },
+  "nav": {
+    "scroll_to_top_title": "Padà sí orí",
+    "skip_to_main": "Fò kọjá sí àkóónú"
+  },
+  "search": {
+    "open_button_title": "Wá (/)",
+    "close_button_title": "Ti (Esc)",
+    "input_placeholder": "Wá"
+  },
+  "sharing": {
+    "email": "Fi ránṣẹ́ nípasẹ̀ ímeèlì",
+    "facebook": "Pín lórí Facebook",
+    "line": "Pín lórí LINE",
+    "linkedin": "Pín lórí LinkedIn",
+    "pinterest": "Kàn mọ́ Pinterest",
+    "reddit": "Fi sí Reddit",
+    "twitter": "Pín lórí Twitter",
+    "bluesky": "Gbé jáde lórí Bluesky",
+    "whatsapp": "Pín nípasẹ̀ WhatsApp",
+    "telegram": "Pín nípasẹ̀ Telegram"
+  },
+  "shortcode": {
+    "recent_articles": "Àwọn àpilẹ̀kọ tuntun"
+  },
+  "recent": {
+    "show_more": "Fi sí i hàn"
+  },
+  "admonition": {
+    "abstract": "Àkópọ̀",
+    "bug": "Àṣìṣe",
+    "caution": "Ìṣọra",
+    "danger": "Ewu",
+    "example": "Àpẹẹrẹ",
+    "failure": "Ìkùnà",
+    "important": "Pàtàkì",
+    "info": "Ìsọfúnni",
+    "note": "Àkọsílẹ̀",
+    "question": "Ìbéèrè",
+    "quote": "Ìtọ́kasí",
+    "success": "Àṣeyọrí",
+    "tip": "Ìmọ̀ràn",
+    "todo": "Iṣẹ́ tí ó kù",
+    "warning": "Ìkìlọ̀"
+  },
+  "cookie_notice": {
+    "message_with_link": "Ojú-ìwé yìí ń lo kúkì àti irú rẹ̀. Jọ̀wọ́ ka ìlànà àṣírí wa",
+    "message": "Ojú-ìwé yìí ń lo kúkì àti irú rẹ̀. Lílò ó túmọ̀ sí pé o gbà á.",
+    "privacy_policy": "Ìlànà àṣírí",
+    "button": "Mo ti yé mi",
+    "image_alt": "Àwòrán kúkì"
+  }
+}
