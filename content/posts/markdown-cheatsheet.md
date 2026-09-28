@@ -1,10 +1,13 @@
 ---
-title: "Markdown 写作速查表"
+title: Markdown 写作速查表
 date: 2026-09-17
 draft: false
-summary: "写博客只需要记住这些就够了。把这篇留着，忘了就翻一下。"
-tags: ["Markdown", "写作"]
-categories: ["建站笔记"]
+summary: 写博客只需要记住这些就够了。把这篇留着，忘了就翻一下。
+tags:
+- Markdown
+- 写作
+categories:
+- 建站笔记
 showTableOfContents: true
 bilingual: true
 ---

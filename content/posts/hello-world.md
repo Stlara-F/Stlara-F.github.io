@@ -1,10 +1,13 @@
 ---
-title: "你好，世界：这个博客是怎么搭起来的"
+title: 你好，世界：这个博客是怎么搭起来的
 date: 2026-09-18
 draft: false
-summary: "第一篇正式文章。交代一下这个博客的技术选型，以及它为什么长这样。"
-tags: ["Hugo", "GitHub Pages"]
-categories: ["建站笔记"]
+summary: 第一篇正式文章。交代一下这个博客的技术选型，以及它为什么长这样。
+tags:
+- Hugo
+- GitHub Pages
+categories:
+- 建站笔记
 showTableOfContents: true
 bilingual: true
 ---

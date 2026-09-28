@@ -247,7 +247,7 @@ buildFuture = false
     # 键名统一小写是命名约定，大小写不影响产物；但上面的
     # defaultContentLanguage 必须与键名逐字相同，否则本语言的 params 会整块失效。
     locale = "zh-CN"
-    title = "Stlara-F's blog"
+    title = "Stlara-F 的博客"
     weight = 1
     [languages.zh-cn.params]
       displayName = "简体中文"
